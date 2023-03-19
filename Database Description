@@ -1,0 +1,74 @@
+Cinebase Database Description
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+title - Contains the following information for titles:
+    titleId (varchar) - alphanumeric unique identifier of the title
+    titleType (varchar) - the type/format of the title (e.g. movie, short, tvseries, tvepisode, video, etc)
+    primaryTitle (varchar) - the more popular title / the title used by the filmmakers on promotional materials at the point of release
+    originalTitle (varchar) - original title, in the original language
+    isAdult (boolean) - 0: non-adult title; 1: adult title
+    startYear (int) - represents the release year of a title. In the case of TV Series, it is the series start year
+    endYear (int) - TV Series end year. ‘\N’ for all other title types
+    runtimeMinutes (int) - primary runtime of the title, in minutes
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+titleHasGenre - Contains title, genre pairs
+    titleId (varchar) - alphanumeric unique identifier of the title
+    genres (varchar) - Genre of the title
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+episode - Contains the tv episode information. Fields include:
+    titleId (varchar) - alphanumeric identifier of episode
+    parenttitleId (varchar) - alphanumeric identifier of the parent TV Series
+    seasonNumber (int) - season number the episode belongs to
+    episodeNumber (int) - episode number of the titleId in the TV series
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+principal - Contains the principal cast/crew for titles
+    titleId (varchar) - alphanumeric unique identifier of the title
+    ordering (int) - a number to uniquely identify rows for a given titleId
+    personId (varchar) - alphanumeric unique identifier of the name/person
+    category (varchar) - the category of job that person was in
+    characters (varchar) - the name of the character played if applicable, else '\N'
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+rating - Contains the IMDb rating and votes information for titles
+    titleId (varchar) - alphanumeric unique identifier of the title
+    averageRating (float) - weighted average of all the individual user ratings
+    numVotes (int) - number of votes the title has received
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+persons - Contains the following information for names:
+    personId (varchar) - alphanumeric unique identifier of the name/person
+    primaryName (varchar)- name by which the person is most often credited
+    birthYear - (int) format
+    deathYear - (int) format if applicable, else '\N'
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+personKnownForTitle - 
+    personId (varchar) - alphanumeric unique identifier of the name/person
+    titleId (varchar) - title the person is known for
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+user - user information who will use this application
+    userid (int) - Unique identifier for every user
+    password (varchar) - personal password hash
+    username (varchar) - full name of the user
+    email (varchar) - email id of the user
+    birthDate (date) - birthdate of the user
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+userRatedTitle - user ratings for different titles relation
+    userid (int) - Unique identifier for every user
+    titleId (varchar) - alphanumeric unique identifier of the title
+    rating (int) - 0 to 10 integer. 10 being Outstanding and 0 the worst.
+
+-----------------------------------------------------------------------------------------------------------------------------------------
