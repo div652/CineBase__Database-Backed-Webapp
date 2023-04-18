@@ -1,0 +1,371 @@
+-- Master
+\set t_title '\'oppenHeime\''
+\set t_type '\'movie\''
+\set srt_yr 2023
+\set end_yr 2023
+\set is_adlt NULL
+\set rn_time NULL
+\set t_genre_list NULL
+\set cutOrIn false
+
+Select *
+From title t
+Where (:t_title is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || :t_title || '%') or lower(trim(t.originaltitle)) LIKE lower('%' || :t_title || '%'))
+	and (:t_type is NULL or lower(t.titletype) = lower(:t_type))
+	and (:srt_yr is NULL or t.startyear >= :srt_yr)
+	and (:end_yr is NULL or t.endyear is NULL or t.endyear <= :end_yr)
+	and (:is_adlt is NULL or t.isadult = :is_adlt)
+	and (:rn_time is NULL or t.runtime <= :rn_time)
+	and (:t_genre_list is NULL or (:cutOrIn = true and :t_genre_list & t.genres > 0) or (:cutOrIn = false and :t_genre_list & t.genres = :t_genre_list));
+
+------------------------------------------------------------------------------------------------------------------
+
+-- Genre Based Recomendation
+\set curr_user 1
+
+CREATE OR REPLACE FUNCTION calculate_genre_scores(curr_user INTEGER) 
+RETURNS INTEGER[] AS $$
+DECLARE
+    genre_scores INTEGER[];
+    rec record;
+    ind INTEGER;
+BEGIN
+    -- SELECT curr_user INTO user_id;
+    CREATE TEMP VIEW ratedxtitle AS
+    SELECT r.userid, t.titleid, r.rating, t.genres
+    FROM rated r Join title t On r.titleid = t.titleid;
+
+    -- initialize the array with zeros
+    genre_scores := array_fill(0, ARRAY[32]);
+
+    -- loop over the tuples
+    FOR rec IN SELECT * FROM ratedxtitle rt where rt.userid = curr_user LOOP
+        FOR ind IN 0..31 LOOP
+            IF ((rec.genres >> ind) & 1) = 1 THEN
+                -- added 1 because it was 1 indexed array
+                genre_scores[ind+1] := genre_scores[ind+1] + rec.rating;
+            END IF;
+        END LOOP;
+    END LOOP;
+
+    -- return the array
+    DROP VIEW ratedxtitle;
+    RETURN genre_scores;
+END $$ LANGUAGE plpgsql;
+
+Select calculate_genre_scores(:curr_user);
+
+Select userid, calculate_genre_scores(userid)
+From users 
+Where userid = :curr_user;
+
+
+CREATE OR REPLACE FUNCTION calculate_score(genre INTEGER, genre_scores INTEGER[])
+RETURNS INTEGER AS $$
+DECLARE
+    score INTEGER := 0;
+    ind INTEGER;
+BEGIN
+    -- loop over the tuples
+    -- RAISE NOTICE 'Genre scores: %', genre_scores;
+
+    FOR ind IN 0..31 LOOP
+        IF ((genre >> ind) & 1) = 1 THEN
+            score := score + genre_scores[ind + 1];
+            -- RAISE NOTICE 'new score: %', score;
+        END IF;
+        
+    END LOOP;
+
+    -- return the score
+    RETURN score;
+END $$ LANGUAGE plpgsql;
+
+DO $$
+DECLARE
+    genre_scores INTEGER[];
+    curr_user INTEGER := 1;
+BEGIN
+    SELECT calculate_genre_scores(curr_user) INTO genre_scores;
+    -- RAISE NOTICE 'Genre scores: %', genre_scores;
+
+    SELECT count(*), calculate_score(t.genres, genre_scores) as score
+    FROM title t
+    ORDER BY score DESC
+    LIMIT 5;
+
+END $$;
+Select * from res;
+
+----------------------------------------------------------------------------------------------------
+-- ADD USER -- 
+INSERT INTO users (userid, password, username, email, birthdate)
+VALUES (1, 'password123', 'JohnDoe', 'johndoe@example.com', '1990-01-01');
+
+INSERT INTO users (userid, password, username, email, birthdate)
+VALUES (10, 'NOpassword', 'gutov', 'gutov@example.com', '2015-01-01');
+
+
+
+-- Inserting ratings for John Doe
+INSERT INTO rated (userid, titleid, rating)
+VALUES (1, 'tt0127236', 8),
+       (1, 'tt0183268', 9),
+       (1, 'tt0111263', 10);
+
+-- Inserting ratings for Sarah Jones
+INSERT INTO rated (userid, titleid, rating)
+VALUES (4, 'tt0116083', 7),
+       (4, 'tt0184926', 6);
+
+-- Inserting ratings for ThisIsAReallyLongUsername
+INSERT INTO rated (userid, titleid, rating)
+VALUES (5, 'tt0183268', 10),
+       (5, 'tt0116083', 8),
+       (5, 'tt0184926', 9);
+
+-- Inserting ratings for Tom Brown
+INSERT INTO rated (userid, titleid, rating)
+VALUES (6, 'tt0111263', 6),
+       (6, 'tt0116083', 7),
+       (6, 'tt0184926', 5);
+
+-- Inserting ratings for Linda Lee
+INSERT INTO rated (userid, titleid, rating)
+VALUES (7, 'tt0127236', 9),
+       (7, 'tt0183268', 10),
+       (7, 'tt0116083', 8),
+       (7, 'tt0184926', 9);
+
+-- Inserting ratings for Dave Wilson
+INSERT INTO rated (userid, titleid, rating)
+VALUES (8, 'tt0127236', 7),
+       (8, 'tt0116083', 6),
+       (8, 'tt0184926', 8);
+
+------------------------------------------------------------------------------------------------------------------
+
+-- Episodes master query working:
+\set s_num_start  -1
+\set s_num_end -1
+\set ep_num_start -1
+\set ep_num_end -1
+\set min_eps  1000  
+\set max_eps  100000 
+
+with totEpFilter as 
+(Select parenttitleid from episode group by parenttitleid having count(*) >= :min_eps and count(*) < :max_eps) 
+, required_series_filter as 
+(select titleid from episode where parenttitleid in (select * from totEpFilter))
+Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (:min_eps=0 AND :max_eps=100000)
+UNION
+Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (  t.titleid in (select * from required_series_filter));
+
+--------------------------------------------------------------------------------------------------------
+-- Celebs Born in the same year
+-- 10542 ms
+\set birthdate 'date ''1980-04-01'''
+select primaryName
+from persons
+where birthYear = date_part('year', :birthdate);
+
+--Who's my favorite actor? 
+--deciding my summing the user’s ratings for all movies the actor has acted in
+--  5319 ms
+\set usr_id 1
+select primaryName as myFavActor
+from rated natural join principal natural join persons
+where userid = :usr_id and (category='actor')
+group by personid, primaryName
+order by sum(rating) DESC
+limit 1;
+
+-- 2564 ms (because of fewer actresses than actors in industry, we got lesser runtime for actresses... less than half!)
+select primaryName as myFavActress
+from rated natural join principal natural join persons
+where userid = :usr_id and (category='actress')
+group by personid, primaryName
+order by sum(rating) DESC
+limit 1;
+
+-- MOST popular movies/series of all time
+-- 1874 ms
+Select t.primarytitle as name, r.averagerating as rating
+From title t Join ratings r On (t.titleid = r.titleid and r.averageRating is not NULL)
+Order By (r.averageRating * r.numVotes) DESC
+LIMIT 10;
+
+
+-- trending near me? Couldn't add column location as we didn't have write access on db
+\set curr_user 1
+
+With nearby_users AS
+(
+    Select userid 
+    From user 
+    where loc in (Select loc from users where userid = :curr_user)
+),
+t_scores AS
+(
+    Select titleid, SUM(rating) as score
+    From rated where userid in nearby_users
+    group By titleid
+    Order By score DESC
+    LIMIT 10
+)
+Select t.primaryName as TrendingHits
+From title t Join t_scores ts on t.titleid = ts.titleid
+Order By ts.score DESC
+LIMIT 10;
+
+-- you have some 'must' include genres or 'at least' one of your genre? We have got you covered! 
+\set t_type '\'movie\''
+\set srt_yr 2023
+\set t_genre_list 263296
+\set cutOrIn false
+
+-- if cutOrIn is false, we take only those movies which have all the genres as specified the by the user
+-- if it is true, we check if the movie has at least 1 of the genres specified by the user
+Select *
+From title t
+Where (:t_type is NULL or lower(t.titletype) = lower(:t_type))
+	and (:srt_yr is NULL or t.startyear >= :srt_yr)
+	and (:t_genre_list is NULL or (:cutOrIn = true and :t_genre_list & t.genres > 0) or (:cutOrIn = false and :t_genre_list & t.genres = :t_genre_list));
+
+-- Want to watch adult movies but you're under 18? don't worry we won't suggest them to you ;)
+-- Master
+\set t_type '\'movie\''
+\set srt_yr 2023
+\set is_adlt true
+\set curr_user 1
+With above18 as(
+    SELECT EXTRACT(YEAR FROM age(now(), u.birthdate)) >= 18 AS is_above_18 
+    FROM users u 
+    WHERE u.userid = :curr_user
+)
+Select *
+From title t
+Where (:t_type is NULL or lower(t.titletype) = lower(:t_type))
+	and (:srt_yr is NULL or t.startyear >= :srt_yr)
+	and (:is_adlt is NULL or (t.isadult = :is_adlt and t.isadult in (Select * From above18)));
+
+
+-- Tell me the name ofl the first episode from the series that started after 1990 and has more than 1000 episodes 
+-- 30193ms
+\set s_num_start  1
+\set s_num_end 1
+\set ep_num_start 1
+\set ep_num_end 1
+\set min_eps   1000  
+\set max_eps   100000
+
+with totEpFilter as 
+(Select parenttitleid from episode group by parenttitleid having count(*) >= :min_eps and count(*) < :max_eps) 
+, required_series_filter as 
+(select titleid from episode where parenttitleid in (select * from totEpFilter)) ,  
+Selected_eps as  
+(Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (:min_eps=0 AND :max_eps=100000)
+UNION
+Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (  t.titleid in (select * from required_series_filter)))
+
+Select primarytitle from title join selected_eps on title.titleid=selected_eps.titleid where startyear=1990;
+
+
+-- Suggest me all the episode from the first season of series that have minimum 7 seasons but no more than 20 seasons
+-- 18673 ms
+\set s_num_start  1
+\set s_num_end -1
+\set ep_num_start 1
+\set ep_num_end -1
+\set min_eps   7  
+\set max_eps   20 
+
+with totEpFilter as 
+(Select parenttitleid from episode group by parenttitleid having count(*) >= :min_eps and count(*) < :max_eps) 
+, required_series_filter as 
+(select titleid from episode where parenttitleid in (select * from totEpFilter)) ,  
+Selected_eps as  
+(Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (:min_eps=0 AND :max_eps=100000)
+UNION
+Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (  t.titleid in (select * from required_series_filter)))
+
+Select primarytitle from title join selected_eps on title.titleid=selected_eps.titleid limit 100;
+
+--Suggest me the first episode from series that have minimum 5 seasons but no more than 10 seasons
+-- 12463 ms
+\set s_num_start  1
+\set s_num_end 1
+\set ep_num_start 1
+\set ep_num_end 1
+\set min_eps   5  
+\set max_eps   10 
+
+with totEpFilter as 
+(Select parenttitleid from episode group by parenttitleid having count(*) >= :min_eps and count(*) < :max_eps) 
+, required_series_filter as 
+(select titleid from episode where parenttitleid in (select * from totEpFilter)) ,  
+Selected_eps as  
+(Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (:min_eps=0 AND :max_eps=100000)
+UNION
+Select * From episode t 
+Where 
+(:s_num_start= -1 or t.seasonNumber >= :s_num_start)
+and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
+and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
+and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
+And (  t.titleid in (select * from required_series_filter)))
+
+Select primarytitle from title join selected_eps on title.titleid=selected_eps.titleid limit 10;
+
+
+-- Most popular celebs of all time!!!
+-- 325736 ms
+select primaryName as mostPopularCeleb 
+from persons natural join principal natural join ratings
+group by personid, primaryName, titleid
+order by sum(averageRating*numVotes) DESC
+limit 10;
+
+------------------------------------------------------------------------------------------------------------------------------------------
