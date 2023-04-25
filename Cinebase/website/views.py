@@ -1,14 +1,26 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
-# from .models import Note
 # from . import db
 import json
+import psycopg2
+
+
+def create_db_connection():
+    conn = psycopg2.connect(
+        host = "10.17.50.87",
+        port = 5432,
+        database = "group_12",
+        user = "group_12",
+        password = "ZzlQI7X4VqxdMJ" 
+    )
+
+    return conn
 
 views = Blueprint('views', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def home():
     if request.method == 'POST': 
         # note = request.form.get('note')#Gets the note from the HTML 
