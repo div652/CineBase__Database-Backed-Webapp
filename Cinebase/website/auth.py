@@ -1,9 +1,19 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-# from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-# from . import db   ##means from __init__.py import db
 from flask_login import login_user, login_required, logout_user, current_user
+import psycopg2
 
+
+def create_db_connection():
+    conn = psycopg2.connect(
+        host = "10.17.50.87",
+        port = 5432,
+        database = "group_12",
+        user = "group_12",
+        password = "ZzlQI7X4VqxdMJ" 
+    )
+
+    return conn
 
 auth = Blueprint('auth', __name__)
 
@@ -14,6 +24,7 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
+        # login_user(email, remember=True)
         # user = User.query.filter_by(email=email).first()
         # if user:
         #     if check_password_hash(user.password, password):
@@ -29,7 +40,7 @@ def login():
 
 
 @auth.route('/logout')
-@login_required
+# @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
@@ -38,10 +49,10 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
-        # email = request.form.get('email')
-        # first_name = request.form.get('firstName')
-        # password1 = request.form.get('password1')
-        # password2 = request.form.get('password2')
+        email = request.form.get('email')
+        first_name = request.form.get('firstName')
+        password1 = request.form.get('password1')
+        password2 = request.form.get('password2')
 
         # user = User.query.filter_by(email=email).first()
         # if user:
@@ -60,7 +71,7 @@ def sign_up():
         #     db.session.add(new_user)
         #     db.session.commit()
         #     login_user(new_user, remember=True)
-        #     flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+        flash('Account created!', category='success')
+        return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
