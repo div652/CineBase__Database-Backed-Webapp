@@ -1,0 +1,95 @@
+{% extends "base.html" %} {% block title %}Search Movies{% endblock %} {% block content
+    %}
+    <form method="POST">
+      <h3 align="center">Search for movies in our database</h3>
+      <div class="form-group">
+        <label for="movie_name">Name or part of name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="subsrting_tolookfor"
+          name="subsrting_tolookfor"
+          placeholder="Part of name"
+        />
+      </div>
+      <div class="form-group">
+        <label for="Genre"> </label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          placeholder="Enter password"
+        />
+      </div>
+      <br />
+
+
+      <div class="inputs">
+
+
+        <table>
+          <tbody>
+          <tr>
+            <td><input id="genres-1" type="checkbox" name="genres" value="action"> <label for="genres-1">Action</label></td>
+            <td><input id="genres-2" type="checkbox" name="genres" value="adventure"> <label for="genres-2">Adventure</label></td>
+            <td><input id="genres-3" type="checkbox" name="genres" value="animation"> <label for="genres-3">Animation</label></td>
+            <td><input id="genres-4" type="checkbox" name="genres" value="biography"> <label for="genres-4">Biography</label></td>
+          </tr>
+          <tr>
+            <td><input id="genres-5" type="checkbox" name="genres" value="comedy"> <label for="genres-5">Comedy</label></td>
+            <td><input id="genres-6" type="checkbox" name="genres" value="crime"> <label for="genres-6">Crime</label></td>
+            <td><input id="genres-7" type="checkbox" name="genres" value="documentary"> <label for="genres-7">Documentary</label></td>
+            <td><input id="genres-8" type="checkbox" name="genres" value="drama"> <label for="genres-8">Drama</label></td>
+          </tr>
+          <tr>
+            <td><input id="genres-9" type="checkbox" name="genres" value="family"> <label for="genres-9">Family</label></td>
+            <td><input id="genres-10" type="checkbox" name="genres" value="fantasy"> <label for="genres-10">Fantasy</label></td>
+            <td><input id="genres-11" type="checkbox" name="genres" value="film_noir"> <label for="genres-11">Film-Noir</label></td>
+            <td><input id="genres-12" type="checkbox" name="genres" value="game_show"> <label for="genres-12">Game-Show</label></td>
+          </tr>
+          <tr>
+            <td><input id="genres-13" type="checkbox" name="genres" value="history"> <label for="genres-13">History</label></td>
+            <td><input id="genres-14" type="checkbox" name="genres" value="horror"> <label for="genres-14">Horror</label></td>
+            <td><input id="genres-15" type="checkbox" name="genres" value="music"> <label for="genres-15">Music</label></td>
+            <td><input id="genres-16" type="checkbox" name="genres" value="musical"> <label for="genres-16">Musical</label></td>
+          </tr>
+          <tr>
+            <td><input id="genres-17" type="checkbox" name="genres" value="mystery"> <label for="genres-17">Mystery</label></td>
+            <td><input id="genres-18" type="checkbox" name="genres" value="news"> <label for="genres-18">News</label></td>
+            <td><input id="genres-19" type="checkbox" name="genres" value="reality_tv"> <label for="genres-19">Reality-TV</label></td>
+            <td><input id="genres-20" type="checkbox" name="genres" value="romance"> <label for="genres-20">Romance</label></td>
+          </tr>
+          <tr>
+            <td><input id="genres-21" type="checkbox" name="genres" value="sci_fi"> <label for="genres-21">Sci-Fi</label></td>
+            <td><input id="genres-22" type="checkbox" name="genres" value="sport"> <label for="genres-22">Sport</label></td>
+            <td><input id="genres-23" type="checkbox" name="genres" value="talk_show"> <label for="genres-23">Talk-Show</label></td>
+            <td><input id="genres-24" type="checkbox" name="genres" value="thriller"> <label for="genres-24">Thriller</label></td>
+          </tr>
+          <tr><td><input id="genres-25" type="checkbox" name="genres" value="war"> <label for="genres-25">War</label></td>
+            <td><input id="genres-26" type="checkbox" name="genres" value="western"> <label for="genres-26">Western</label></td>
+          </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+     
+      <div class="clause">
+        <div class="label">
+
+          <h3>Number of Votes<img id="ilm_help_button_num_votes" class="ilm_help_button" src="https://m.media-amazon.com/images/G/01/IMDb/Search/icon_help._CB478096481_.gif" title="To restrict your search by number of votes, enter a minimum value in the first box to get titles with more than that number of votes, and/or a maximum value in the second box to get titles with less than that number of votes. Remember, neither is required, so if you want only titles that have at least 1000 votes, all you have to enter is 1000 in the first box, and you can leave the maximum box blank. We do not include rating counts less than five.">
+          </h3>
+        </div>
+        <div class="inputs">
+
+          <input name="num_votes-min" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)"> to <input name="num_votes-max" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)">
+
+        </div>
+      </div>
+
+
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    {% endblock %}
+    

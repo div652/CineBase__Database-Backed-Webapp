@@ -8,7 +8,7 @@ views = Blueprint('views', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def home():
     if request.method == 'POST': 
         # note = request.form.get('note')#Gets the note from the HTML 
@@ -21,13 +21,19 @@ def home():
             # db.session.commit()
             flash('Note added!', category='success')
 
-    return render_template("home.html", user=current_user)
+    return render_template("home.html")
 
-# @views.route('/movies', methods=['GET', 'POST'])
-# def movies_stuff():
-#     if request.method == 'POST': 
-#         movie = request.form.get('movie')#Gets the note from the HTML 
+@views.route('/movies', methods=['GET', 'POST'])
+def movies_stuff():
+    if request.method == 'POST': 
+        movie = request.form.get('movie')#Gets the note from the HTML 
+    return render_template("movies.html")
 
+@views.route('/people', methods=['GET', 'POST'])
+def people():
+    if request.method == 'POST': 
+        person = request.form.get('p')#Gets the note from the HTML 
+    return render_template("people.html")
 
 
 # @views.route('/delete-note', methods=['POST'])
