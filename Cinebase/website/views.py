@@ -48,6 +48,7 @@ def people():
     return render_template("people.html")
 
 
+
 # @views.route('/delete-note', methods=['POST'])
 # def delete_note():  
 #     note = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
