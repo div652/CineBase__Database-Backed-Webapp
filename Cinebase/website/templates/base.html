@@ -10,7 +10,7 @@
 
     <title>{% block title %}Home{% endblock %}</title>
   </head>
-  <body>
+  <body style="background-image: url('https://thumbs.dreamstime.com/b/movie-cinema-vector-pattern-doodle-hand-drawn-sketch-style-seamless-elements-media-production-festival-theater-background-262160678.jpg');" >
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <button
         class="navbar-toggler"
@@ -22,6 +22,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbar">
         <div class="navbar-nav ml-auto">
+          <div class="d-flex justify-content-between">
           
           {% if false %}
           <a class="nav-item nav-link" id="home" href="/">Home</a>
@@ -33,10 +34,15 @@
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
          
-          <a class="btn btn-outline-danger me-2" type="button" href="/">Logout</a>
+         
+            <a class="btn btn-outline-danger ml-auto" type="button" href="/">Logout</a>
+          
+
+          
       
           {% endif %} 
           
+          </div>
         </div> 
       </div>
     </nav>
@@ -58,8 +64,14 @@
       </button>
     </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
+  </br>
+    
+    <div class="container rounded" style="background-color: #fffded; font-size: 18px">
+      
+      <h1 class="text-center py-4" style="background-color: #fce008; border-radius: 14px; font-family:serif "> {% block contentHeader %} {% endblock %}</h1> 
 
-    <div class="container">{% block content %} {% endblock %}</div>
+      {% block content %} {% endblock %}</div>
+    
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -88,5 +100,6 @@
   }
 </script>
 {% endblock %}
- </body>
+</body>
+
 </html>

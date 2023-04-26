@@ -1,8 +1,11 @@
-{% extends "base.html" %} {% block title %}Search People{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Search People{% endblock %} 
+
+{% block contentHeader %} Search for People  {% endblock %}
+
+{% block content
     %}
     <form method="POST">
       <br/>
-      <h2 align="center">Search for people in our database</h2>
       <div class="form-group">
         <label for="movie_name">Name or part of name</label>
         <input

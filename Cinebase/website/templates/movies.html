@@ -1,8 +1,11 @@
-{% extends "base.html" %} {% block title %}Search Movies{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Search Movies{% endblock %} 
+
+{% block contentHeader %} Search for Movies {% endblock %}
+
+{% block content
   %}
   <form method="POST">
     <br/>
-    <h2 align="center">Search for movies in our database</h2>
     <div class="form-group">
       <label for="movie_name">Name or part of name</label>
       <input
@@ -142,7 +145,16 @@
     <div class="clause">
       <div class="label">
 
-        <h5>Popularity<img id="ilm_help_button_num_votes" class="ilm_help_button" src="https://m.media-amazon.com/images/G/01/IMDb/Search/icon_help._CB478096481_.gif" title="To restrict your search by popularity ranking, enter a minimum value in the first box to get titles rank order starting with the entered value (1 being the highest ranked title), and/or a maximum value in the second box to get titles with popularity ranking up to that value. Remember, neither is required, so if you want only titles that rank in the top 10, all you have to enter is 10 in the second box, and you can leave the first box blank."></h5>
+        <h5>Popularity
+          <block type="button" class="btn btn-secondary"
+        data-bs-toggle="popover" data-bs-placement="right"
+        data-bs-container="body"
+        data-bs-custom-class="custom-popover"
+        data-bs-title="Custom popover"
+        data-bs-content="This popover is themed via CSS variables.">
+  Custom popover
+        </block>
+
       </div>
       <div class="inputs">
 

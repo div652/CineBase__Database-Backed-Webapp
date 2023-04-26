@@ -1,6 +1,69 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-    %}
-    <h1 align="center">Home Page</h1>
-    
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+{% block contentHeader %} Home Page {% endblock %}
+{% block content %}
+
+</br>
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4" px=10>
+  <div class="col">
+    <div class="card text-center mb-3 " style="width: 18rem;">
+      <img src="https://static.startuptalky.com/2022/05/Motivational-Movies-For-Entrepreneurs-StartupTalky.jpg" class="card-img-top" alt="buff">
+      <div class="card-body">
+        <h5 class="card-title">Search Movies</h5>
+        <p class="card-text">Look for movies in our vast database. You'll be recommended movies according to your own taste.</p>
+      </div>
+
+      <div class="card-body">
+        <a href="/movies" class="btn btn-primary">Search</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="col">
+    <div class="card text-center mb-3" style="width: 18rem;">
+      <img src="https://cdn.justjared.com/wp-content/uploads/headlines/2017/12/most-popular-celebs-2017.jpg" class="card-img-top" alt="buff">
+      <div class="card-body">
+        <h5 class="card-title">Search Celebrities</h5>
+        <p class="card-text">Can't remember the name of an actor a movie? We'll help you find that  </p>
+      </div>
+
+      <div class="card-body">
+        <a href="/people" class="btn btn-primary">Search</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="col">
+    <div class="card text-center mb-3 " style="width: 18rem; card-spacer-x: 20px">
+      <img src="https://www.harshmode.com/wp-content/uploads/2016/08/bestshows.jpg" class="card-img-top" alt="buff">
+      <div class="card-body">
+        <h5 class="card-title">Search Shows</h5>
+        <p class="card-text">Find the perfect show you wish to binge on</p>
+      </div>
+
+      <div class="card-body">
+        <a href="/shows" class="btn btn-primary">Search</a>
+      </div>
+    </div>
+  </div>
+
+    <!--<div class="col">
+    <div class="card text-center mb-3 " style="width: 18rem; card-spacer-x: 20px">
+      <img src="https://cdn.gaminggorilla.com/wp-content/uploads/2023/02/The-Most-Popular-Games-to-Play-Right-Now.jpg" class="card-img-top" alt="buff">
+      <div class="card-body">
+        <h5 class="card-title">Search Video Games</h5>
+        <p class="card-text">Find a video game of your choice</p>
+      </div>
+
+      <div class="card-body">
+        <a href="/games" class="btn btn-primary">Search</a>
+      </div>
+    </div>-->
+  </div>
+
+    </div>
+  
+
     
     {% endblock %}

@@ -19,6 +19,7 @@ def create_db_connection():
 views = Blueprint('views', __name__)
 
 
+
 @views.route('/', methods=['GET', 'POST'])
 # @login_required
 def home():
@@ -47,6 +48,17 @@ def people():
         person = request.form.get('p')#Gets the note from the HTML 
     return render_template("people.html")
 
+@views.route('/shows', methods=['GET', 'POST'])
+def shows():
+    if request.method == 'POST': 
+        person = request.form.get('p')#Gets the note from the HTML 
+    return render_template("shows.html")
+
+@views.route('/games', methods=['GET', 'POST'])
+def games():
+    if request.method == 'POST': 
+        person = request.form.get('p')#Gets the note from the HTML 
+    return render_template("games.html")
 
 
 # @views.route('/delete-note', methods=['POST'])
