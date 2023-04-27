@@ -101,12 +101,15 @@ def movies_stuff():
             cutOrIn='true'
         )
         cur.execute(formatted_query)
+        print(formatted_query)
         ret = cur.fetchall()
+        new_ret = [(x[0], x[2]) for x in ret]
 
-        print(ret)
+        print(new_ret)
         
-        # print(query)
-             
+        # print(query)     
+        return render_template("outputMovies.html",user=curr_user,name_of_user=Name_of_user,tuples=new_ret)
+    
     return render_template("movies.html",user=curr_user,name_of_user=Name_of_user)
 
 @views.route('/people', methods=['GET', 'POST'])
@@ -141,6 +144,16 @@ def games():
 def quickLinks():
     link = request.args.get('link')
     # Here you can use the value of `link` to determine what output to show
+    return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=Name_of_user)
+
+@views.route('/movie_info', methods=['GET', 'POST'])
+def movie_info():
+    link = request.args.get('link')
+    if(not(session['logged_in'])):
+        flash('You must login to continue to this page', category='error')
+        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+    if request.method == 'POST': 
+        person = request.form.get('p')#Gets the note from the HTML 
     return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=Name_of_user)
 
 

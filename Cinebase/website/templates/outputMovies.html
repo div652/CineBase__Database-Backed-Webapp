@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block title %}Movie Results{% endblock %} 
+
+{% block contentHeader %} Here are the movies we retrieved  {% endblock %}
+
+{% block content
+    %}
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for (id, name) in tuples %}
+            <tr>
+              <td><a href="/movie_info?link=id">{{ name }}</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endblock %}
+    
