@@ -1,0 +1,9 @@
+Select *
+From title t
+Where ({t_title} is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || {t_title} || '%') or lower(trim(t.originaltitle)) LIKE lower('%' || {t_title} || '%'))
+	and ({t_type} is NULL or lower(t.titletype) = lower({t_type}))
+	and ({srt_yr} is NULL or t.startyear >= {srt_yr})
+	and ({end_yr} is NULL or t.endyear is NULL or t.endyear <= {end_yr})
+	and ({is_adlt} is NULL or t.isadult = {is_adlt})
+	and ({rn_time} is NULL or t.runtime <= {rn_time})
+	and ({t_genre_list} = 0 or ({cutOrIn} = true and {t_genre_list} & t.genres > 0) or ({cutOrIn} = false and {t_genre_list} & t.genres = {t_genre_list}));
