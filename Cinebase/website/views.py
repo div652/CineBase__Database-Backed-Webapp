@@ -148,13 +148,13 @@ def quickLinks():
 
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
-    link = request.args.get('link')
+    titleid = request.args.get('titleid')
     if(not(session['logged_in'])):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
     if request.method == 'POST': 
         person = request.form.get('p')#Gets the note from the HTML 
-    return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=Name_of_user)
+    return render_template('quickLinks.html', link=titleid,user=curr_user,name_of_user=Name_of_user)
 
 
 # @views.route('/delete-note', methods=['POST'])
