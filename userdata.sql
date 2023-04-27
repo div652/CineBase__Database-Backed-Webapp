@@ -1,3 +1,20 @@
+CREATE OR REPLACE FUNCTION update_ratings()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ratings
+    SET averagerating = (averagerating * numVotes + NEW.rating) / (numVotes + 1),
+        numVotes = numVotes + 1
+    WHERE titleid = NEW.titleid;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER rated_insert_trigger
+AFTER INSERT ON rated
+FOR EACH ROW
+EXECUTE PROCEDURE update_ratings();
+
+
 INSERT INTO users (emailid, username, password, location, birthdate)
 VALUES ('johndoe@gmail.com', 'JohnDoe', 'password123', 'Bristol', '1990-01-01');
 
@@ -60,3 +77,6 @@ VALUES('olga.ivanova@gmail.com', 'olgai', 'password5678', 'Moscow, Russia', '198
 
 INSERT INTO users (emailid, username, password, location, birthdate)
 VALUES('chris.nguyen@yahoo.com', 'chrisnguyen', 'password999', 'Ho Chi Minh City, Vietnam', '1991-01-12');
+
+INSERT INTO users (emailid, username, password, location, birthdate)
+VALUES('kartik@yahoo.com', 'kartik', 'uyfgwyv', 'Sydney, Australia', '2002-11-03');
