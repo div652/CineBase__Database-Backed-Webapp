@@ -24,16 +24,21 @@ Where (:u_title is NULL or lower(trim(primarytitle)) LIKE lower('%' || :u_title 
 ORDER BY averageRating DESC, numVotes DESC;
 
 
------ master: persons, principal, title, ratings ------
+----- Person info (persons, principal, title, ratings) ------
 \set u_title NULL
 \set u_startYear 1980
 \set u_numTitles 20
-\set u_celeb '\'Christopher Nolan\''
-\set u_category '\'director\''
+\set u_celeb '\'Leonardo Dicaprio\''
+\set u_category '\'actor\''
 
-Select title.*, averageRating
+select 
+    CASE 
+        WHEN :u_category = 'actor' or :u_category = 'actress' THEN primaryTitle::text || ' (' || characterName::text || ')'
+        ELSE primaryTitle::text
+    END AS title_info,
+isAdult, runtime, startYear as Year, averageRating
 From persons natural join principals natural join title natural join ratings
-Where (primaryName= :u_celeb)
+Where (lower(trim(primaryName)) LIKE lower('%' || :u_celeb || '%'))
     and (:u_category is NULL or category= :u_category)
     and (:u_title is NULL or lower(trim(primarytitle)) LIKE lower('%' || :u_title || '%') or lower(trim(originaltitle)) LIKE lower('%' || :u_title || '%'))
 	and (:u_titleType is NULL or lower(titletype) = lower(:u_titleType))
@@ -46,6 +51,33 @@ Where (primaryName= :u_celeb)
     and (:u_averageRating is NULL or averageRating>= :u_averageRating)
 ORDER BY averageRating DESC, numVotes DESC
 LIMIT CASE WHEN :u_numTitles is not null THEN :u_numTitles ELSE 100 END;
+
+
+----- Movie info (persons, principal, title, ratings) ------
+\set u_title '\'Pirates of the Caribbean\''
+select 
+    CASE
+        WHEN category = 'actor' or category = 'actress' THEN primaryName::text || ' (' || characterName::text || ')'
+        ELSE primaryName::text
+    END AS title_info,
+category, runtime, startYear as Year, averageRating
+From ratings natural join title natural join principals natural join persons natural join personCategoryTitles
+Where (lower(trim(primarytitle)) LIKE lower('%' || :u_title || '%') or lower(trim(originaltitle)) LIKE lower('%' || :u_title || '%'))
+order by numTitles DESC
+limit 10;
+
+
+
+----- function to calculate the popularity of a person in given category ------
+CREATE OR REPLACE FUNCTION celeb_category_popularity(name VARCHAR, cat VARCHAR)
+RETURNS INTEGER AS $$
+BEGIN
+  RETURN (SELECT COUNT(*) FROM persons natural join principals WHERE primaryName=name AND category = cat);
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT celeb_category_popularity('Keanu Reeves', 'actor');
+
 
 ----- debut movie of given actor -----
 \set u_actor '\'Tom Hanks\''
@@ -161,20 +193,40 @@ BEGIN
     RETURN score;
 END $$ LANGUAGE plpgsql;
 
--- DO $$
--- DECLARE
---     genre_scores INTEGER[];
---     curr_user VARCHAR := 'mohammed.ali@yahoo.com';
--- BEGIN
---     SELECT calculate_genre_scores(curr_user) INTO genre_scores;
---     -- RAISE NOTICE 'Genre scores: %', genre_scores;
---     SELECT count(*), calculate_score(t.genres, genre_scores) as score
---     FROM title t
---     ORDER BY score DESC
---     LIMIT 5;
--- END $$;
+DO $$
+DECLARE
+    genre_scores INTEGER[];
+    curr_user VARCHAR := 'mohammed.ali@yahoo.com';
+BEGIN
+    SELECT calculate_genre_scores(curr_user) INTO genre_scores;
+    -- RAISE NOTICE 'Genre scores: %', genre_scores;
+    SELECT count(*), calculate_score(t.genres, genre_scores) as score
+    FROM title t
+    ORDER BY score DESC
+    LIMIT 5;
+END $$;
 -- Select * from res;
 
+
+----- Location based recommendation -----
+CREATE OR REPLACE FUNCTION get_top_movies_by_location(emailid VARCHAR)
+RETURNS TABLE (primaryTitle TEXT, isAdult BOOLEAN, runtime INTEGER, rating INTEGER)
+AS $$
+BEGIN
+  RETURN QUERY
+    SELECT CAST(t.primaryTitle AS TEXT), t.isAdult, t.runtime, r.rating
+    FROM rated r
+    JOIN users u ON r.emailid = u.emailid
+    JOIN ratings rt ON r.titleid = rt.titleid
+    JOIN title t ON r.titleid = t.titleid
+    WHERE u.location = (SELECT location FROM users u2 WHERE u2.emailid = emailid)
+    ORDER BY r.rating DESC
+    LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
+
+\set u_emailid '\'kartik@yahoo.com\''
+SELECT * FROM get_top_movies_by_location(:u_emailid);
 
 ----- master: episodes -----
 \set s_num_start  1
@@ -211,3 +263,16 @@ and (:s_num_end = -1 or t.seasonNumber <= :s_num_end)
 and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
 and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
 and (  t.titleid in (select * from required_series_filter));
+
+create table personCategoryTitles as
+select personid, category, count(*) as numTitles
+from principals
+group by personid, category;
+
+create table principal as
+select titleid, personid, category, characterName
+from (
+    select titleid, personid, category, characterName, row_number() over(partition by titleid, personid, category order by characterName asc) as row_num
+    from principals
+) as T
+where T.row_num=1;
