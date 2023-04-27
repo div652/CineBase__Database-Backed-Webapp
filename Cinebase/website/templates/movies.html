@@ -119,7 +119,7 @@
         
         <div class="inputs">
 
-          <input name="num_votes-min" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" placeholder="min"> to <input name="num_votes-max" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" placeholder="max">
+          <input name="runtime-min" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" placeholder="min"> to <input name="runtime-max" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" placeholder="max">
 
         </div>
 
@@ -146,14 +146,8 @@
       <div class="label">
 
         <h5>Popularity
-          <block type="button" class="btn btn-secondary"
-        data-bs-toggle="popover" data-bs-placement="right"
-        data-bs-container="body"
-        data-bs-custom-class="custom-popover"
-        data-bs-title="Custom popover"
-        data-bs-content="This popover is themed via CSS variables.">
-  Custom popover
-        </block>
+          
+        
 
       </div>
       <div class="inputs">
@@ -169,3 +163,14 @@
   </form>
   {% endblock %}
   
+  {% block javascript %} 
+  
+  <script>
+    const popover = new bootstrap.Popover('.example-popover', {
+      container: 'body'
+    })
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  </script>
+
+  {% endblock %}

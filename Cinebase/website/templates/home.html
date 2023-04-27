@@ -8,7 +8,7 @@
 <div class="row row-cols-1 row-cols-md-3 g-4" px=10>
   <div class="col">
     <div class="card text-center mb-3 " style="width: 18rem;">
-      <img src="https://static.startuptalky.com/2022/05/Motivational-Movies-For-Entrepreneurs-StartupTalky.jpg" class="card-img-top" alt="buff">
+      <img src="/static/img/movie_thumbnail.jpg" class="card-img-top" alt="buff">
       <div class="card-body">
         <h5 class="card-title">Search Movies</h5>
         <p class="card-text">Look for movies in our vast database. You'll be recommended movies according to your own taste.</p>
@@ -22,7 +22,7 @@
 
     <div class="col">
     <div class="card text-center mb-3" style="width: 18rem;">
-      <img src="https://cdn.justjared.com/wp-content/uploads/headlines/2017/12/most-popular-celebs-2017.jpg" class="card-img-top" alt="buff">
+      <img src="/static/img/celeb_thumbnail.jpg" class="card-img-top" alt="buff">
       <div class="card-body">
         <h5 class="card-title">Search Celebrities</h5>
         <p class="card-text">Can't remember the name of an actor a movie? We'll help you find that  </p>
@@ -36,7 +36,7 @@
 
     <div class="col">
     <div class="card text-center mb-3 " style="width: 18rem; card-spacer-x: 20px">
-      <img src="https://www.harshmode.com/wp-content/uploads/2016/08/bestshows.jpg" class="card-img-top" alt="buff">
+      <img src="/static/img/show_thumbnail.jpg" class="card-img-top" alt="buff">
       <div class="card-body">
         <h5 class="card-title">Search Shows</h5>
         <p class="card-text">Find the perfect show you wish to binge on</p>
@@ -44,6 +44,25 @@
 
       <div class="card-body">
         <a href="/shows" class="btn btn-primary">Search</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card mb-3 w-150" style="width: 600px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="/static/img/man-standing-near-waterfall.jpg" class="img-fluid rounded-start" alt="..." >
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><a href="/quickLinks?link=1" class="btn btn-outline-primary">Top 50 Movies of All time</a></li>
+            <li class="list-group-item"><a href="/quickLinks?link=2" class="btn btn-outline-primary">Upcoming Movies</a></li>
+            <li class="list-group-item"><a href="/quickLinks?link=3" class="btn btn-outline-primary">Debuts this year</a></li>
+
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -64,6 +83,20 @@
 
     </div>
   
+    <script>
+      function checkLogin() {
+        if ('{{ session.logged_in }}' !== 'True') {
+          flash('Password must be at least 7 characters.', category='error')
+        }
+      }
+    
+    </script>
+    <script>
+      document.getElementById('protected-link').addEventListener('click', function(event) {
+        event.preventDefault(); // prevent the link from navigating to its href
+        checkLogin(); // call the checkLogin function to see if the user is logged in
+      });
+    </script>
 
     
     {% endblock %}

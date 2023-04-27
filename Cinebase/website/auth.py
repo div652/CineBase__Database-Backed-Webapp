@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, g
+from flask import Blueprint, render_template, request, flash, redirect, url_for, g,session
 from werkzeug.security import generate_password_hash, check_password_hash
 # from flask_login import login_user, login_required, logout_user
 import psycopg2
 
-curr_user = "Guest"
+curr_user = "guest@nomail.com"
+Name_of_user = "Guest User"
 
 def get_db():
     if 'db' not in g:
@@ -46,13 +47,15 @@ def login():
         if len(data) == 1:
             if check_password_hash(data[0][1], password):
                 flash('Logged in successfully!', category='success')
+                session['logged_in'] = True
                 curr_user = email
+                return redirect(url_for('views.home'))
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
             flash('Email does not exist.', category='error')
 
-    return render_template("login.html")
+    return render_template("login.html",user=curr_user,name_of_user=Name_of_user)
 
 
 @auth.route('/logout')
@@ -60,6 +63,9 @@ def login():
 def logout():
     global curr_user
     curr_user = "Guest"
+    Name_of_user="Guest User"
+    session['logged_in'] = False
+    flash('Logged out !', category='success')
     return redirect(url_for('auth.login'))
 
 
@@ -96,10 +102,11 @@ def sign_up():
             cur.execute(cmd)
             conn.commit()
             curr_user = email
+            Name_of_user = first_name
             flash('Account created!', category='success')
 
         cur.close()
         conn.close()
         return redirect(url_for('views.home'))
 
-    return render_template("sign_up.html")
+    return render_template("sign_up.html",user=curr_user,name_of_user=Name_of_user)

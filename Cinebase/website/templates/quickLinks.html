@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %} 
+
+
+{% block contentHeader %} Quick Search {% endblock %}
+
+{% block content
+%}
+ <h2>Display the output of the query {% if link == '1' %}
+    Output for Link 1
+{% elif link == '2' %}
+    Output for Link 2
+{% elif link == '3' %}
+    Output for Link 3
+{% elif link == '4' %}
+    Output for Link 4
+{% elif link == '5' %}
+    Output for Link 5
+{% else %}
+    Invalid Link
+{% endif %}
+{% endblock %}
