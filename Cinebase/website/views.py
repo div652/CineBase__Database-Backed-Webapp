@@ -101,11 +101,11 @@ def movies_stuff():
             cutOrIn='true'
         )
         cur.execute(formatted_query)
-        print(formatted_query)
+        # print(formatted_query)
         ret = cur.fetchall()
-        new_ret = [(x[0], x[2]) for x in ret]
+        new_ret = [(x[0], x[2],x[5]) for x in ret]
 
-        print(new_ret)
+        print(ret)
         
         # print(query)     
         return render_template("outputMovies.html",user=curr_user,name_of_user=Name_of_user,tuples=new_ret)

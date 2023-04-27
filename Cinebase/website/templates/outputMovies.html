@@ -7,14 +7,15 @@
     <table class="table table-hover">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
+            <th>Year of Release</th>
           </tr>
         </thead>
         <tbody>
-          {% for (id, name) in tuples %}
+          {% for (id, name,year) in tuples %}
             <tr>
-              <td><a href="/movie_info?link=id">{{ name }}</a></td>
+              <td><a href="/movie_info?link={{id}}">{{ name }}</a></td>
+              <td>{{year}}</td>
             </tr>
           {% endfor %}
         </tbody>
