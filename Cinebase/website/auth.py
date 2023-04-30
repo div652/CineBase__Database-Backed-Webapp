@@ -40,12 +40,12 @@ def login():
         conn = create_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users u where u.email = '{}'".format(email))
+        cur.execute("SELECT * FROM users u where u.emailid = '{}'".format(email))
         data = cur.fetchall()
         
         
         if len(data) == 1:
-            if check_password_hash(data[0][1], password):
+            if check_password_hash(data[0][0], password):
                 flash('Logged in successfully!', category='success')
                 session['logged_in'] = True
                 curr_user = email
@@ -53,7 +53,7 @@ def login():
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
-            flash('Email does not exist.', category='error')
+            flash('Email is not registered here. Please signup first.', category='error')
 
     return render_template("login.html",user=curr_user,name_of_user=Name_of_user)
 
@@ -84,11 +84,11 @@ def sign_up():
         conn = create_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users u where u.email = '{}'".format(email))
+        cur.execute("SELECT * FROM users u where u.emailid = '{}'".format(email))
         data = cur.fetchall()
         
         if len(data) > 0:
-            flash('Email already exists.', category='error')
+            flash('User already exists.', category='error')
         elif len(email) < 4:
             flash('Email must be greater than 3 characters.', category='error')
         elif len(first_name) < 2:
@@ -99,7 +99,7 @@ def sign_up():
             flash('Password must be at least 7 characters.', category='error')
         else:
             hsh = generate_password_hash(password1, method='sha256')
-            cmd = "INSERT INTO users (userid, password, username, email, birthdate) VALUES ({}, '{}', '{}', '{}', '{}');".format(2, hsh, first_name, email, dob)
+            cmd = "INSERT INTO users (password, username, emailid, birthdate, location) VALUES ('{}', '{}', '{}', '{}', '{}');".format(hsh, first_name, email, dob, city)
             cur.execute(cmd)
             conn.commit()
             curr_user = email
