@@ -54,6 +54,7 @@ LIMIT CASE WHEN :u_numTitles is not null THEN :u_numTitles ELSE 100 END;
 
 
 ----- Movie info (persons, principal, title, ratings) ------
+\set u_startYear 2003
 \set u_title '\'Pirates of the Caribbean\''
 select 
     CASE
@@ -63,8 +64,10 @@ select
 category, runtime, startYear as Year, averageRating
 From ratings natural join title natural join principals natural join persons natural join personCategoryTitles
 Where (lower(trim(primarytitle)) LIKE lower('%' || :u_title || '%') or lower(trim(originaltitle)) LIKE lower('%' || :u_title || '%'))
+and (:u_startYear is NULL or startyear = :u_startYear)
+and (:u_endYear is NULL or endyear is NULL or endyear <= :u_endYear)
 order by numTitles DESC
-limit 10;
+limit 20;
 
 
 --not required, created table personCategoryTitles--
@@ -88,13 +91,13 @@ order by startYear
 limit 1;
 
 ----- debut movies of all actors -----
-select primaryName, primaryTitle
-from (
- select personid, primaryName, primaryTitle, row_number() over(partition by personid order by startYear asc) as row_num
- from persons natural join principals natural join title
- where (category='actor' or category='actress') and titleType='movie'
-) as T
-where row_num=1;
+-- select primaryName, primaryTitle
+-- from (
+--  select personid, primaryName, primaryTitle, row_number() over(partition by personid order by startYear asc) as row_num
+--  from persons natural join principals natural join title
+--  where (category='actor' or category='actress') and titleType='movie'
+-- ) as T
+-- where row_num=1;
 
 ----- celebs born in the same year as curr_user -----
 \set u_birthdate 'date ''1980-04-01'''
