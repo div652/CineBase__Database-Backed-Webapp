@@ -203,16 +203,29 @@ DECLARE
 BEGIN
     SELECT calculate_genre_scores(curr_user) INTO genre_scores;
     -- RAISE NOTICE 'Genre scores: %', genre_scores;
-    SELECT count(*), calculate_score(t.genres, genre_scores) as score
+    SELECT t.primarytitle, calculate_score(t.genres, genre_scores) as score
     FROM title t
     ORDER BY score DESC
     LIMIT 5;
 END $$;
--- Select * from res;
 
+CREATE OR REPLACE FUNCTION get_top_titles(curr_user VARCHAR)
+RETURNS TABLE (primarytitle VARCHAR, score INTEGER) AS $$
+DECLARE
+    genre_scores INTEGER[];
+BEGIN
+    SELECT calculate_genre_scores(curr_user) INTO genre_scores;
+    RETURN QUERY
+    SELECT t.primarytitle, calculate_score(t.genres, genre_scores) as score
+    FROM title t
+    ORDER BY score DESC
+    LIMIT 5;
+END $$ LANGUAGE plpgsql;
+
+select get_top_titles('mohammed.ali@yahoo.com');
 
 ----- Location based recommendation -----
-CREATE OR REPLACE FUNCTION get_top_movies_by_location(emailid VARCHAR)
+CREATE OR REPLACE FUNCTION get_top_movies_by_location(email VARCHAR)
 RETURNS TABLE (primaryTitle TEXT, isAdult BOOLEAN, runtime INTEGER, rating INTEGER)
 AS $$
 BEGIN
@@ -222,7 +235,7 @@ BEGIN
     JOIN users u ON r.emailid = u.emailid
     JOIN ratings rt ON r.titleid = rt.titleid
     JOIN title t ON r.titleid = t.titleid
-    WHERE u.location = (SELECT location FROM users u2 WHERE u2.emailid = emailid)
+    WHERE u.location = (SELECT location FROM users u2 WHERE u2.emailid = email)
     ORDER BY r.rating DESC
     LIMIT 10;
 END;
