@@ -1,0 +1,72 @@
+CREATE OR REPLACE FUNCTION calculate_genre_scores(curr_user VARCHAR) 
+RETURNS INTEGER[] AS $$
+DECLARE
+    genre_scores INTEGER[];
+    rec record;
+    ind INTEGER;
+BEGIN
+    CREATE TEMP VIEW ratedxtitle AS
+    SELECT r.emailid, t.titleid, r.rating, t.genres
+    FROM rated r Join title t On r.titleid = t.titleid;
+
+    genre_scores := array_fill(0, ARRAY[32]);
+
+    FOR rec IN SELECT * FROM ratedxtitle rt where rt.emailid = curr_user LOOP
+        FOR ind IN 0..31 LOOP
+            IF ((rec.genres >> ind) & 1) = 1 THEN
+                -- added 1 because it was 1 indexed array
+                genre_scores[ind+1] := genre_scores[ind+1] + rec.rating;
+            END IF;
+        END LOOP;
+    END LOOP;
+
+    DROP VIEW ratedxtitle;
+    RETURN genre_scores;
+END $$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION calculate_score(genre INTEGER, genre_scores INTEGER[])
+RETURNS INTEGER AS $$
+DECLARE
+    score INTEGER := 0;
+    ind INTEGER;
+BEGIN
+    -- loop over the tuples
+    -- RAISE NOTICE 'Genre scores: %', genre_scores;
+    FOR ind IN 0..31 LOOP
+        IF ((genre >> ind) & 1) = 1 THEN
+            score := score + genre_scores[ind + 1];
+            -- RAISE NOTICE 'new score: %', score;
+        END IF;
+    END LOOP;
+    -- return the score
+    RETURN score;
+END $$ LANGUAGE plpgsql;
+
+DO $$
+DECLARE
+    genre_scores INTEGER[];
+    curr_user VARCHAR := 'mohammed.ali@yahoo.com';
+BEGIN
+    SELECT calculate_genre_scores(curr_user) INTO genre_scores;
+    -- RAISE NOTICE 'Genre scores: %', genre_scores;
+    SELECT t.primarytitle, calculate_score(t.genres, genre_scores) as score
+    FROM title t
+    ORDER BY score DESC
+    LIMIT 5;
+END $$;
+
+CREATE OR REPLACE FUNCTION get_top_titles(curr_user VARCHAR)
+RETURNS TABLE (primarytitle VARCHAR, score INTEGER) AS $$
+DECLARE
+    genre_scores INTEGER[];
+BEGIN
+    SELECT calculate_genre_scores(curr_user) INTO genre_scores;
+    RETURN QUERY
+    SELECT t.primarytitle, calculate_score(t.genres, genre_scores) as score
+    FROM title t
+    ORDER BY score DESC
+    LIMIT 5;
+END $$ LANGUAGE plpgsql;
+
+select get_top_titles({email});

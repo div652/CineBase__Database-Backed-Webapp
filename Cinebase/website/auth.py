@@ -6,16 +6,16 @@ import psycopg2
 curr_user = "guest@nomail.com"
 Name_of_user = "Guest User"
 
-def get_db():
-    if 'db' not in g:
-        g.db = psycopg2.connect(
-            host = "10.17.50.87",
-            port = 5432,
-            database = "group_12",
-            user = "group_12",
-            password = "ZzlQI7X4VqxdMJ" 
-        )
-    return g.db
+# def get_db():
+#     if 'db' not in g:
+#         g.db = psycopg2.connect(
+#             host = "10.17.50.87",
+#             port = 5432,
+#             database = "group_12",
+#             user = "group_12",
+#             password = "ZzlQI7X4VqxdMJ" 
+#         )
+#     return g.db
 
 def create_db_connection():
     conn = psycopg2.connect(
@@ -40,12 +40,12 @@ def login():
         conn = create_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users u where u.email = '{}'".format(email))
+        cur.execute("SELECT * FROM users u where u.emailid = '{}'".format(email))
         data = cur.fetchall()
         
         
         if len(data) == 1:
-            if check_password_hash(data[0][1], password):
+            if check_password_hash(data[0][0], password):
                 flash('Logged in successfully!', category='success')
                 session['logged_in'] = True
                 curr_user = email
@@ -84,7 +84,7 @@ def sign_up():
         conn = create_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users u where u.email = '{}'".format(email))
+        cur.execute("SELECT * FROM users u where u.emailid = '{}'".format(email))
         data = cur.fetchall()
         
         if len(data) > 0:
@@ -99,7 +99,7 @@ def sign_up():
             flash('Password must be at least 7 characters.', category='error')
         else:
             hsh = generate_password_hash(password1, method='sha256')
-            cmd = "INSERT INTO users (userid, password, username, email, birthdate) VALUES ({}, '{}', '{}', '{}', '{}');".format(2, hsh, first_name, email, dob)
+            cmd = "INSERT INTO users (emailid, password, username, birthdate) VALUES ('{}', '{}', '{}', '{}');".format(email, hsh, first_name, dob, city)
             cur.execute(cmd)
             conn.commit()
             curr_user = email

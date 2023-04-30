@@ -1,0 +1,7 @@
+select primaryName, primaryTitle
+from (
+ select personid, primaryName, primaryTitle, row_number() over(partition by personid order by startYear asc) as row_num
+ from persons natural join principals natural join titl
+ where (category='actor' or category='actress') and titleType='movie'
+) as T
+where row_num=1;
