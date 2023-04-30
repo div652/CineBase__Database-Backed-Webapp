@@ -1,0 +1,6 @@
+select primaryName as myFavActress
+from rated natural join principals natural join persons
+where emailid = {u_emailid} and (category='actress')
+group by personid, primaryName
+order by sum(rating) DESC
+limit 1;

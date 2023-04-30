@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, request, flash, jsonify,session
+from flask import Blueprint, render_template, request, flash, jsonify, session
 # from flask_login import login_required, current_user
 # from . import db
 import json
@@ -60,7 +60,7 @@ def home():
 
 @views.route('/movies', methods=['GET', 'POST'])
 def movies_stuff():
-    if(not(session['logged_in'])):
+    if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
     if request.method == 'POST': 
@@ -104,8 +104,6 @@ def movies_stuff():
         # print(formatted_query)
         ret = cur.fetchall()
         new_ret = [(x[0], x[2],x[5]) for x in ret]
-
-        print(ret)
         
         # print(query)     
         return render_template("outputMovies.html",user=curr_user,name_of_user=Name_of_user,tuples=new_ret)
@@ -114,7 +112,7 @@ def movies_stuff():
 
 @views.route('/people', methods=['GET', 'POST'])
 def people():
-    if(not(session['logged_in'])):
+    if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
         
@@ -124,7 +122,7 @@ def people():
 
 @views.route('/shows', methods=['GET', 'POST'])
 def shows():
-    if(not(session['logged_in'])):
+    if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
     if request.method == 'POST': 
@@ -133,7 +131,7 @@ def shows():
 
 @views.route('/games', methods=['GET', 'POST'])
 def games():
-    if(session['logged_in']):
+    if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
     if request.method == 'POST': 
@@ -149,7 +147,7 @@ def quickLinks():
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
     titleid = request.args.get('titleid')
-    if(not(session['logged_in'])):
+    if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
     if request.method == 'POST': 

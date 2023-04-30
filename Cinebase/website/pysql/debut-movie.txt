@@ -1,0 +1,5 @@
+select primaryName, primaryTitle, originaltitle
+from persons natural join principals natural join title
+where primaryName= {u_actor} and (category='actor' or category='actress') and titleType='movie'
+order by startYear
+limit 1;

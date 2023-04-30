@@ -1,0 +1,1 @@
+select get_top_titles({emailid});
