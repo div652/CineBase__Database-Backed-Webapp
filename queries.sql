@@ -67,16 +67,16 @@ order by numTitles DESC
 limit 10;
 
 
-
+--not required, created table personCategoryTitles--
 ----- function to calculate the popularity of a person in given category ------
-CREATE OR REPLACE FUNCTION celeb_category_popularity(name VARCHAR, cat VARCHAR)
-RETURNS INTEGER AS $$
-BEGIN
-  RETURN (SELECT COUNT(*) FROM persons natural join principals WHERE primaryName=name AND category = cat);
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION celeb_category_popularity(name VARCHAR, cat VARCHAR)
+-- RETURNS INTEGER AS $$
+-- BEGIN
+--   RETURN (SELECT COUNT(*) FROM persons natural join principals WHERE primaryName=name AND category = cat);
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-SELECT celeb_category_popularity('Keanu Reeves', 'actor');
+-- SELECT celeb_category_popularity('Keanu Reeves', 'actor');
 
 
 ----- debut movie of given actor -----
@@ -91,7 +91,7 @@ limit 1;
 select primaryName, primaryTitle
 from (
  select personid, primaryName, primaryTitle, row_number() over(partition by personid order by startYear asc) as row_num
- from persons natural join principals natural join titl
+ from persons natural join principals natural join title
  where (category='actor' or category='actress') and titleType='movie'
 ) as T
 where row_num=1;
@@ -100,7 +100,7 @@ where row_num=1;
 \set u_birthdate 'date ''1980-04-01'''
 select primaryName
 from persons
-where birthYear = date_part('year', :birthdate);
+where birthYear = date_part('year', :u_birthdate);
 
 ----- favorite actor -----
 \set u_emailid '\'tombrown@hotmail.com\''
@@ -264,15 +264,39 @@ and (:ep_num_start= -1 or t.episodeNumber >= :ep_num_start)
 and (:ep_num_end = -1 or t.episodeNumber <= :ep_num_end)
 and (  t.titleid in (select * from required_series_filter));
 
-create table personCategoryTitles as
-select personid, category, count(*) as numTitles
-from principals
-group by personid, category;
+----- upcoming movies -----
+select primaryTitle, runtime, isAdult from title where startYear>=2023 and startYear<=2025;
+--(Use the movies info master query above to get info about a movie from (a substring of) its title)--
 
-create table principal as
-select titleid, personid, category, characterName
-from (
-    select titleid, personid, category, characterName, row_number() over(partition by titleid, personid, category order by characterName asc) as row_num
-    from principals
-) as T
-where T.row_num=1;
+-------- best movies of a decade -------
+\set u_decade 2010
+select *
+from title natural join ratings
+where startYear>= :u_decade and startYear<= :u_decade+10
+and titleType='movie'
+order by averageRating DESC
+limit 10;
+
+------- best actors of a genre -------
+\set u_genre 5
+select primaryName, SUM(averagerating) as genre_popularity
+from ratings natural join title natural join principals natural join persons
+where ((title.genres >> :u_genre) & 1) =1
+group by personid, primaryName
+order by SUM(averagerating) DESC
+limit 10;
+
+-- create table personCategoryTitles as
+-- select personid, category, count(*) as numTitles
+-- from principals
+-- group by personid, category;
+
+-- create table principal as
+-- select titleid, personid, category, characterName
+-- from (
+--     select titleid, personid, category, characterName, row_number() over(partition by titleid, personid, category order by characterName asc) as row_num
+--     from principals
+-- ) as T
+-- where T.row_num=1;
+-- drop table principals;
+-- alter table principal rename to principals;
