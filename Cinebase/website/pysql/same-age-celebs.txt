@@ -1,0 +1,4 @@
+select primaryName
+from persons
+where birthYear = date_part('year', {u_birthdate})
+Limit 100;
