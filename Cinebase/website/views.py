@@ -4,7 +4,6 @@ from flask import Blueprint, render_template, request, flash, jsonify, session
 # from . import db
 import json
 import psycopg2
-from .auth import Name_of_user
 from .auth import curr_user
 
 def create_db_connection():
@@ -56,13 +55,13 @@ def home():
             # db.session.commit()
             flash('Note added!', category='success')
 
-    return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+    return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/movies', methods=['GET', 'POST'])
 def movies_stuff():
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
-        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
     if request.method == 'POST': 
         conn = create_db_connection()
         cur = conn.cursor()
@@ -106,53 +105,71 @@ def movies_stuff():
         new_ret = [(x[0], x[2],x[5]) for x in ret]
         
         # print(query)     
-        return render_template("outputMovies.html",user=curr_user,name_of_user=Name_of_user,tuples=new_ret)
+        return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
     
-    return render_template("movies.html",user=curr_user,name_of_user=Name_of_user)
+    return render_template("movies.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/people', methods=['GET', 'POST'])
 def people():
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
-        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
         
     if request.method == 'POST': 
         person = request.form.get('p')#Gets the note from the HTML 
-    return render_template("people.html",user=curr_user,name_of_user=Name_of_user)
+    return render_template("people.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/shows', methods=['GET', 'POST'])
 def shows():
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
-        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
     if request.method == 'POST': 
         person = request.form.get('p')#Gets the note from the HTML 
-    return render_template("shows.html",user=curr_user,name_of_user=Name_of_user)
+    return render_template("shows.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/games', methods=['GET', 'POST'])
 def games():
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
-        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
     if request.method == 'POST': 
         person = request.form.get('p')#Gets the note from the HTML 
-    return render_template("games.html",user=curr_user,name_of_user=Name_of_user)
+    return render_template("games.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/quickLinks', methods=['GET', 'POST'])
 def quickLinks():
     link = request.args.get('link')
     # Here you can use the value of `link` to determine what output to show
-    return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=Name_of_user)
+    return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
     titleid = request.args.get('titleid')
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
-        return render_template("home.html",user=curr_user,name_of_user=Name_of_user)
-    if request.method == 'POST': 
-        person = request.form.get('p')#Gets the note from the HTML 
-    return render_template('quickLinks.html', link=titleid,user=curr_user,name_of_user=Name_of_user)
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
+    # if request.method == 'POST': 
+        # person = request.form.get('p')#Gets the note from the HTML
+    
+    conn = create_db_connection()
+    cur = conn.cursor()
+    
+    query = open('website/pysql/movie-info.txt', 'r').read()
+    formatted_query = query.format(
+        movie_tid='\''+titleid+'\'',
+    )
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    ret = cur.fetchall()
+    
+    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret)
+    
+        
+        
+         
+    
+    return render_template('quickLinks.html', link=titleid,user=curr_user,name_of_user=session.get('username') )
 
 
 # @views.route('/delete-note', methods=['POST'])
