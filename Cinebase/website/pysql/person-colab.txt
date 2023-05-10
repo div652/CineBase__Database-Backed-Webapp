@@ -1,0 +1,11 @@
+with P as (
+    select P1.personid, P1.primaryName, P1.titleid
+    From 
+    (select * from persons natural join principals where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))) as P1, (select * from persons natural join principals where (lower(trim(primaryName)) LIKE lower('%' || {u_colab} || '%'))) as P2 
+    where P1.titleid = P2.titleid
+    group by P1.personid, P1.primaryName, P1.titleid
+)
+select P.personid, P.primaryName, title.titleid, primaryTitle
+from P join title on P.titleid = title.titleid
+--and (titleType = 'movie' or titleType = 'tvSeries')
+limit 10;
