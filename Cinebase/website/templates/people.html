@@ -7,18 +7,32 @@
     <form method="POST">
       <br/>
       <div class="form-group">
-        <label for="movie_name">Name or part of name</label>
+        <label for="person_name">(part of) Person Name</label>
         <input
           type="text"
           class="form-control"
-          id="subsrting_tolookfor"
-          name="subsrting_tolookfor"
-          placeholder="Part of name"
+          id="person_name_substr"
+          name="person_name_substr"
+          placeholder="Part of person name"
+        />
+      </div>
+
+      <br/>
+      <br/>
+
+      <div class="form-group">
+        <label for="person_name">(part of) Title Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title_name_substr"
+          name="title_name_substr"
+          placeholder="Part of title name"
         />
       </div>
      
-      <br />
-      <br />
+      <br/>
+      <br/>
       <div class='clause'>
       <div class="label">
         <h5>Genres</h5>
@@ -77,7 +91,7 @@
       </div>
     </div>
      
-    <br />
+    <!-- <br />
       <br />
 
       <div class="clause">
@@ -152,7 +166,7 @@
 
         </div>
       </div>
-      <br />
+      <br /> -->
       
 
       <button type="submit" class="btn btn-primary">Search</button>
