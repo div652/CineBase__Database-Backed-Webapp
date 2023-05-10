@@ -169,6 +169,20 @@ def people():
             
             # print(query)     
             return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+        
+        elif genres!='NULL':
+            query = open('website/pysql/person-genre.txt', 'r').read()
+            formatted_query = query.format(
+                u_celeb=celeb_name,
+                u_genres=genres
+            )
+            #print(formatted_query)
+            cur.execute(formatted_query)
+            ret = cur.fetchall()
+            new_ret = [(x[0], x[1]) for x in ret]
+            
+            # print(query)     
+            return render_template("outputPeople.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
 
     return render_template("people.html",user=curr_user,name_of_user=session.get('username') )
 
