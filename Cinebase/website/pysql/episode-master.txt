@@ -1,27 +1,26 @@
 with 
-    totEpFilter as(
+    totEpFilter(titleid) as(
     select parenttitleid 
     from episode 
     group by parenttitleid 
-    having count(*) >= {min_eps} and count(*) < {max_eps}
+    having count(*) >= {min_eps} and count(*) <= {max_eps}
     ), 
-    required_series_filter as(
-    select titleid
-    from episode
-    where parenttitleid in (select * from totEpFilter)
+    parentSeasons(parenttitleid,seasonNumber) as 
+     (
+        select distinct on (parenttitleid, seasonNumber) parenttitleid,seasonNumber
+        from episode join totEpFilter on episode.parenttitleid=totEpFilter.titleid
+        order by parenttitleid,seasonNumber 
+    ) ,
+    totSeaFilter(titleid) as(
+    select parenttitleid
+    from parentSeasons
+    group by parenttitleid
+    having count(*) >= {min_seas} and count(*) <= {max_seas}
     )
-select * From episode t 
-where 
-({s_num_start}= -1 or t.seasonNumber >= {s_num_start})
-and ({s_num_end} = -1 or t.seasonNumber <= {s_num_end})
-and ({ep_num_start}= -1 or t.episodeNumber >= {ep_num_start})
-and ({ep_num_end} = -1 or t.episodeNumber <= {ep_num_end})
-and ({min_eps}=0 AND {max_eps}=100000)
-UNION
-select * From episode t 
-where 
-({s_num_start}= -1 or t.seasonNumber >= {s_num_start})
-and ({s_num_end} = -1 or t.seasonNumber <= {s_num_end})
-and ({ep_num_start}= -1 or t.episodeNumber >= {ep_num_start})
-and ({ep_num_end} = -1 or t.episodeNumber <= {ep_num_end})
-and (  t.titleid in (select * from required_series_filter));
+Select *
+From totSeaFilter e natural join title t
+Where ({t_title} is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || {t_title} || '%') or lower(trim(t.originaltitle)) LIKE lower('%' || {t_title} || '%'))
+	and ({srt_yr} is NULL or t.startyear >= {srt_yr})
+	and ({end_yr} is NULL or t.startyear <= {end_yr})
+	and ({t_genre_list} = 0 or ({t_genre_list} & t.genres > 0) )
+limit 20;
