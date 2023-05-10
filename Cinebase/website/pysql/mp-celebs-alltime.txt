@@ -1,5 +1,4 @@
-select primaryName as mostPopularCeleb 
-from persons natural join principals natural join ratings
-group by personid, primaryName, titleid
-order by sum(averageRating*numVotes) DESC
-limit 10;
+select personid, primaryName
+from persons natural join popularity_by_personid
+order by popularity DESC
+limit 50;

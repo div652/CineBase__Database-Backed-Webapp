@@ -215,8 +215,52 @@ def games():
 @views.route('/quickLinks', methods=['GET', 'POST'])
 def quickLinks():
     link = request.args.get('link')
+    conn = create_db_connection()
+    cur = conn.cursor()
+    print(link)
+    if link=='1':
+        query = open('website/pysql/mp-movies-alltime.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[2], x[5], x[9]) for x in ret]
+        return render_template('outputMoviesRatings.html', user=curr_user,name_of_user=session.get('username'), tuples=new_ret)
+
+    elif link=='2':
+        query = "select * from title where startYear>=2023 and titleType='movie';"
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[2],x[5]) for x in ret]
+        return render_template('outputMovies.html', user=curr_user,name_of_user=session.get('username'), tuples=new_ret)
+        
+    elif link=='3':
+        query = open('website/pysql/mp-celebs-alltime.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[1]) for x in ret]
+        return render_template("outputPeople.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
+    elif link=='4':
+        query = open('website/pysql/debuts-this-year.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
+        return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
+    # elif link==3:
+    #     query = open('website/pysql/mp-movies-alltime.txt', 'r').read()
+    #     formatted_query = query.format()
+    #     cur.execute(formatted_query)
+    #     # print(formatted_query)
+    #     ret = cur.fetchall()
     # Here you can use the value of `link` to determine what output to show
-    return render_template('quickLinks.html', link=link,user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
