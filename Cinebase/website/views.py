@@ -118,8 +118,60 @@ def people():
         return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
         
     if request.method == 'POST': 
-        person = request.form.get('p')#Gets the note from the HTML 
+        conn = create_db_connection()
+        cur = conn.cursor()
+        # data = cur.fetchall()
+
+        data = {}
+        for key, value in request.form.items():
+            if value == '':
+                data[key] = 'NULL'
+            elif not value.isdigit():
+                data[key] = '\'' + value + '\''
+            else:
+                data[key] = value
+
+        celeb_name = data['person_name_substr']
+        title_name = data['title_name_substr']
+        colab_name = data['colab_name_substr']
+        # release_date_min = data['release_date-min']
+        # release_date_max = data['release_date-max']
+        # runtime_min = data['runtime-min']
+        # runtime_max = data['runtime-max']
+        # moviemeter_min = data['moviemeter-min']
+        # moviemeter_max = data['moviemeter-max']
+        genres = genres_to_list(request.form.getlist('genres'))
+
+        if title_name!='NULL':
+            query = open('website/pysql/person-title.txt', 'r').read()
+            formatted_query = query.format(
+                u_celeb=celeb_name,
+                u_title=title_name
+            )
+            cur.execute(formatted_query)
+            # print(formatted_query)
+            ret = cur.fetchall()
+            new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
+            
+            # print(query)     
+            return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
+        elif colab_name!='NULL':
+            query = open('website/pysql/person-colab.txt', 'r').read()
+            formatted_query = query.format(
+                u_celeb=celeb_name,
+                u_colab=colab_name
+            )
+            cur.execute(formatted_query)
+            # print(formatted_query)
+            ret = cur.fetchall()
+            new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
+            
+            # print(query)     
+            return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
     return render_template("people.html",user=curr_user,name_of_user=session.get('username') )
+
 
 @views.route('/shows', methods=['GET', 'POST'])
 def shows():
@@ -237,7 +289,45 @@ def movie_info():
     ret = cur.fetchall()
     return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
         
-        
+@views.route('/person_info', methods=['GET', 'POST'])
+def person_info():
+    personid = request.args.get('personid')
+    name = request.args.get('name')
+    if not session.get('logged_in'):
+        flash('You must login to continue to this page', category='error')
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
+    # if request.method == 'POST': 
+        # person = request.form.get('p')#Gets the note from the HTML
+    
+    conn = create_db_connection()
+    cur = conn.cursor()
+ 
+    # query = "obama"  # the search query you want to make
+    # url = f"https://www.google.com/search?q={query}&amp;tbm=isch"  # the URL of the search result page
+    
+    # print("the url searched is ",url)
+    # response = requests.get(url)  # make a GET request to the URL
+    # soup = BeautifulSoup(response.text, "html.parser")  # parse the HTML content with BeautifulSoup
+    
+    # # find the first image link by searching for the appropriate tag and attribute
+    # img_tag = soup.find("img", {"class": "yWs4tf"})
+    
+    # if img_tag is not None:
+    #     img_link = img_tag.get("src")
+    #     print(img_link)  # print the first image link
+    # else:
+    #     print("No image found on the page.")
+
+
+    query = open('website/pysql/person-info.txt', 'r').read()
+    formatted_query = query.format(
+        celebid='\''+personid+'\'',
+    )
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    ret = cur.fetchall()
+    return render_template("person_info.html",user=curr_user,name_of_user=session.get('username') , person_data=ret, person_name=name)
+
 
 # @views.route('/delete-note', methods=['POST'])
 # def delete_note():  
