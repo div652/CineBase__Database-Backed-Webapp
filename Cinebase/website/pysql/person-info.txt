@@ -5,11 +5,11 @@ select
     END AS title_info,
 category,
 CASE 
-        WHEN deathYear is null THEN (2022-birthYear)::text || '(' || birthYear::text || ' - ' ||  ')'
+        WHEN deathYear is null THEN (2022-birthYear)::text || ' (' || birthYear::text || ' - ' ||  ')'
         ELSE birthYear::text || ' - ' || deathYear::text
     END AS age_info,
-title.*
+titleid
 From persons natural join principals natural join title natural join ratings
-Where personid = {celebid}
+Where personid = {celebid} and (titleType = 'movie' or titleType = 'tvSeries')
 ORDER BY averageRating DESC, numVotes DESC
 LIMIT 10;
