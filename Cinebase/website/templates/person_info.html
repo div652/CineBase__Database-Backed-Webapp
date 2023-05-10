@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}{{person_name}}{% endblock %} 
+
+{% block contentHeader %} Here is some information about the person  {% endblock %}
+
+{% block content
+    %}
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Person : {{person_name}}</li>
+        <li class="list-group-item">Age : {{person_data[0][2]}} </li>
+      </ul>
+      <br>
+      <br>
+      <h2>Famous Titles: </h2>
+      <br>
+      
+      <table class="table table-hover">
+        <thead>
+          <tr>
+              <th>Title Info</th>
+              <th>Category of the celebrity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for (titleinfo, category, _, _) in person_data %}
+            <tr>
+                <td>{{ titleinfo }}</td>
+                <td>{{category}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <br>
+    <br>
+    <br> 
+    {% endblock %}
+    
+    
+    

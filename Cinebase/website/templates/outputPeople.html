@@ -12,10 +12,10 @@
           </tr>
         </thead>
         <tbody>
-          {% for (pid, name, tid, title) in tuples %}
+          {% for (pid, name, category) in tuples %}
             <tr>
               <td><a href="/person_info?personid={{pid}}&name={{name}}">{{ name }}</a></td>
-              <td><a href="/movie_info?titleid={{tid}}&moviename={{title}}">{{ title }}</a></td>
+              <td>{{ category }}</td>
             </tr>
           {% endfor %}
         </tbody>
