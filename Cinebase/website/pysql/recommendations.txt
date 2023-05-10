@@ -1,0 +1,1 @@
+select * from  get_top_movies_by_genre({emailid});

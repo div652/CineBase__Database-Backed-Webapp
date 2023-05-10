@@ -1,0 +1,83 @@
+{% extends "base.html" %} {% block title %}Search Movies{% endblock %} 
+
+{% block contentHeader %} Choose the Genres {% endblock %}
+
+{% block content
+  %}
+  <form method="POST">
+    <br/>
+    
+   
+    <div class='clause'>
+    
+    <div class="inputs">
+      <table>
+        <tbody>
+        <tr>
+          <td><input id="genres-1" type="checkbox" class="form-check-input" name="genres" value="action"> <label for="genres-1">Action</label></td>
+          <td><input id="genres-2" type="checkbox" class="form-check-input" name="genres" value="adventure"> <label for="genres-2">Adventure</label></td>
+          <td><input id="genres-3" type="checkbox" class="form-check-input" name="genres" value="animation"> <label for="genres-3">Animation</label></td>
+          <td><input id="genres-4" type="checkbox" class="form-check-input" name="genres" value="biography"> <label for="genres-4">Biography</label></td>
+        
+          <td><input id="genres-5" type="checkbox" class="form-check-input" name="genres" value="comedy"> <label for="genres-5">Comedy</label></td>
+          <td><input id="genres-6" type="checkbox" class="form-check-input" name="genres" value="crime"> <label for="genres-6">Crime</label></td>
+          <td><input id="genres-7" type="checkbox" class="form-check-input" name="genres" value="documentary"> <label for="genres-7">Documentary</label></td>
+
+        </tr>
+        <tr>
+
+          <td><input id="genres-8" type="checkbox" class="form-check-input" name="genres" value="drama"> <label for="genres-8">Drama</label></td>
+        
+          <td><input id="genres-9" type="checkbox" class="form-check-input" name="genres" value="family"> <label for="genres-9">Family</label></td>
+          <td><input id="genres-10" type="checkbox" class="form-check-input" name="genres" value="fantasy"> <label for="genres-10">Fantasy</label></td>
+          <td><input id="genres-11" type="checkbox" class="form-check-input" name="genres" value="film_noir"> <label for="genres-11">Film-Noir</label></td>
+          <td><input id="genres-12" type="checkbox" class="form-check-input" name="genres" value="game_show"> <label for="genres-12">Game-Show</label></td>
+        
+          <td><input id="genres-13" type="checkbox" class="form-check-input" name="genres" value="history"> <label for="genres-13">History</label></td>
+          <td><input id="genres-14" type="checkbox" class="form-check-input" name="genres" value="horror"> <label for="genres-14">Horror</label></td>
+
+        </tr>
+        <tr>
+
+          <td><input id="genres-15" type="checkbox" class="form-check-input" name="genres" value="music"> <label for="genres-15">Music</label></td>
+          <td><input id="genres-16" type="checkbox" class="form-check-input" name="genres" value="musical"> <label for="genres-16">Musical</label></td>
+          <td><input id="genres-17" type="checkbox" class="form-check-input" name="genres" value="mystery"> <label for="genres-17">Mystery</label></td>
+          <td><input id="genres-18" type="checkbox" class="form-check-input" name="genres" value="news"> <label for="genres-18">News</label></td>
+          <td><input id="genres-19" type="checkbox" class="form-check-input" name="genres" value="reality_tv"> <label for="genres-19">Reality-TV</label></td>
+          <td><input id="genres-20" type="checkbox" class="form-check-input" name="genres" value="romance"> <label for="genres-20">Romance</label></td>
+
+          <td><input id="genres-21" type="checkbox" class="form-check-input" name="genres" value="sci_fi"> <label for="genres-21">Sci-Fi</label></td>
+        </tr>
+        <tr>
+
+          <td><input id="genres-22" type="checkbox" class="form-check-input" name="genres" value="sport"> <label for="genres-22">Sport</label></td>
+          <td><input id="genres-23" type="checkbox" class="form-check-input" name="genres" value="talk_show"> <label for="genres-23">Talk-Show</label></td>
+          <td><input id="genres-24" type="checkbox" class="form-check-input" name="genres" value="thriller"> <label for="genres-24">Thriller</label></td>
+        </tr>
+        <tr><td><input id="genres-25" type="checkbox" class="form-check-input" name="genres" value="war"> <label for="genres-25">War</label></td>
+          <td><input id="genres-26" type="checkbox" class="form-check-input" name="genres" value="western"> <label for="genres-26">Western</label></td>
+        </tr>
+        </tbody>
+      </table>
+
+
+    </div>
+  </div>
+
+<br>
+
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+  {% endblock %}
+  
+  {% block javascript %} 
+  
+  <script>
+    const popover = new bootstrap.Popover('.example-popover', {
+      container: 'body'
+    })
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+  </script>
+
+  {% endblock %}

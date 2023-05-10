@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-</style>
+    <style>
+      .column-2 {
+        column-count: 2; 
+      }
+      </style>
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -82,8 +85,18 @@
                           <a class="nav-item nav-link" id="shows" href="/shows">Shows</a>
                         </li>
                         <ul>
+
                           <li class ="nav-item">
-                            <a class="btn btn-outline-warning ml-auto" type="button" href="/recommendations" style="margin-left: 30px ; font-size: 20px;">Recommend Me a Movie</a>
+                            <div class="dropdown">
+                            <a class="btn btn-outline-warning  dropdown-toggle " type="button" href="/logout" data-bs-toggle="dropdown" aria-expanded="false" style="margin-left: 30px ; font-size: 20px; opacity:">Recommend</a>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="/genreRecommend">Genre Based</a></li>
+                              <li><a class="dropdown-item" href="/locRecommend">Location Based</a></li>
+                              <li><a class="dropdown-item" href="/celebRecommend">Celebrity Based</a></li>
+                            </ul>
+                          </div>
+
+                          
                             </li>
                           </ul>
                         

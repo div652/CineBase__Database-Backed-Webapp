@@ -1,5 +1,0 @@
-with 
-movierats as 
-(select titleid, (averagerating*numvotes) as r  from ratings) 
-, personPopularity as 
-(select personid , titleid,averageRating*numvotes)  

@@ -156,7 +156,7 @@ def people():
                 u_title=title_name
             )
             cur.execute(formatted_query)
-            # print(formatted_query)
+            print(formatted_query)
             ret = cur.fetchall()
             new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
             
@@ -170,7 +170,7 @@ def people():
                 u_colab=colab_name
             )
             cur.execute(formatted_query)
-            # print(formatted_query)
+            print(formatted_query)
             ret = cur.fetchall()
             new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
             
@@ -183,7 +183,7 @@ def people():
                 u_celeb=celeb_name,
                 u_genres=genres
             )
-            #print(formatted_query)
+            print(formatted_query)
             cur.execute(formatted_query)
             ret = cur.fetchall()
             new_ret = [(x[0], x[1]) for x in ret]
@@ -253,6 +253,33 @@ def quickLinks():
         ret = cur.fetchall()
         new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
         return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+    
+    if link=='5':
+        query = open('website/pysql/mp-shows.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[2], x[5], x[9]) for x in ret]
+        return render_template('outputShowRatings.html', user=curr_user,name_of_user=session.get('username'), tuples=new_ret)
+    
+    if link=='6':
+        query = open('website/pysql/mp-shows.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[2], x[5], x[9]) for x in ret]
+        return render_template('outputShowRatings.html', user=curr_user,name_of_user=session.get('username'), tuples=new_ret)
+    
+    if link=='7':
+        query = open('website/pysql/mp-shows.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[2], x[5], x[9]) for x in ret]
+        return render_template('outputShowRatings.html', user=curr_user,name_of_user=session.get('username'), tuples=new_ret)
 
     # elif link==3:
     #     query = open('website/pysql/mp-movies-alltime.txt', 'r').read()
@@ -405,7 +432,52 @@ def person_info():
     return render_template("person_info.html",user=curr_user,name_of_user=session.get('username') , person_data=ret, person_name=name)
 
 # @views.route('/recommendations', methods=['GET', 'POST'])
+@views.route('/genreRecommend', methods=['GET', 'POST'])
+def genreRec():
+    user_email=session.get('curr_user')
+    query = open('website/pysql/recommendations.txt', 'r').read()
+    conn = create_db_connection()
+    cur = conn.cursor()
+    formatted_query = query.format(
+        emailid='\''+user_email+'\'',
+    )
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    ret = cur.fetchall()
+    new_ret = [(x[0], x[1],x[2]) for x in ret]
+    return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
 
+@views.route('/locRecommend', methods=['GET', 'POST'])
+def locRec():
+    user_email=session.get('curr_user')
+    query = open('website/pysql/locRec.txt', 'r').read()
+    conn = create_db_connection()
+    cur = conn.cursor()
+    formatted_query = query.format(
+        emailid='\''+user_email+'\'',
+    )
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    ret = cur.fetchall()
+    new_ret = [(x[0], x[1],x[2]) for x in ret]
+    return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
+
+@views.route('/celebRecommend', methods=['GET', 'POST'])
+def celebRec():
+    user_email=session.get('curr_user')
+    query = open('website/pysql/celebRec.txt', 'r').read()
+    conn = create_db_connection()
+    cur = conn.cursor()
+    formatted_query = query.format(
+        emailid='\''+user_email+'\'',
+    )
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    ret = cur.fetchall()
+    new_ret = [(x[0], x[1],x[2]) for x in ret]
+    return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+    
     
 
 

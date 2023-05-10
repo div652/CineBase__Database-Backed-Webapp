@@ -1,5 +1,5 @@
 select title.*, averagerating as rating
 from title natural join ratings
-where averageRating is not NULL
+where averageRating is not NULL and titletype='movie'
 order By (averageRating * numVotes) DESC
-limit 10;
+limit 50;
