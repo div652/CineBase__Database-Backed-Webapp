@@ -238,6 +238,15 @@ def quickLinks():
         new_ret = [(x[0], x[1]) for x in ret]
         return render_template("outputPeople.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
 
+    elif link=='4':
+        query = open('website/pysql/debuts-this-year.txt', 'r').read()
+        formatted_query = query.format()
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[0], x[1], x[2], x[3]) for x in ret]
+        return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+
     # elif link==3:
     #     query = open('website/pysql/mp-movies-alltime.txt', 'r').read()
     #     formatted_query = query.format()

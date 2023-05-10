@@ -1,0 +1,4 @@
+select personid, primaryName, titleid, primaryTitle
+from title natural join principals natural join persons
+where startYear = 2023 and titleType = 'movie'
+limit 20;
