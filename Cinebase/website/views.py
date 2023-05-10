@@ -215,27 +215,29 @@ def shows():
                 data[key] = value
 
         series_name = data['series_name_substr']
-        s_num_min = data['s_num_min']
-        s_num_max = data['s_num_max']
-        ep_num_min = data['ep_num_min']
-        ep_num_max = data['ep_num_max']
-        min_eps = data['min_eps']
-        max_eps = data['max_eps']
+        release_date_min = data['release_date_min']
+        release_date_max = data['release_date_max']
+        eps_min = data['num_eps_min']
+        eps_max = data['num_eps_max']
+        seas_min = data['num_seas_min']
+        seas_max = data['num_seas_max']
+        genres = genres_to_list(request.form.getlist('genres'))
 
         query = open('website/pysql/episode-master.txt', 'r').read()
         formatted_query = query.format(
             t_title=series_name,
-            s_num_max = s_num_max,
-            s_num_min = s_num_min,
-            ep_num_start = ep_num_max,
-            ep_num_min = ep_num_min,
-            min_eps = min_eps,
-            max_eps = max_eps
+            srt_yr=release_date_min,
+            end_yr=release_date_max,
+            min_eps=eps_min,
+            max_eps=eps_max,
+            min_seas=seas_min,
+            max_seas=seas_max,
+            t_genre_list=genres
         )
         cur.execute(formatted_query)
         # print(formatted_query)
         ret = cur.fetchall()
-        new_ret = [(x[1], x[6], x[9]) for x in ret]
+        new_ret = [(x[0], x[2], x[5]) for x in ret]
         
         # print(query)     
         return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
