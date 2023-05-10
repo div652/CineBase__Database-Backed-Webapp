@@ -20,11 +20,11 @@ def create_db_connection():
     return conn
 
 views = Blueprint('views', __name__)
-bitval={'Documentary':0 ,  'Short':1 ,  'Animation':2, 'Comedy':3, 'Romance':4 ,'Sport':5, 'News':6,
- 'Drama':7, 'Fantasy':8, 'Horror':9, 'Biography':10, 'Music':11, 'War':12, 'Crime':13, 'Western':14,
- 'Family':15, 'Adventure':16, 'Action':17, 'History':18 ,'Mystery':19,  'Sci-Fi':20,
- 'Musical':21, 'Thriller':22, 'Film-Noir':23, 'Talk-Show':24, 'Game-Show':25, 'Reality-TV':26,
- 'Adult':27,'nan':28}
+bitval={'documentary':0 ,  'short':1 ,  'animation':2, 'comedy':3, 'romance':4 ,'sport':5, 'news':6,
+ 'drama':7, 'fantasy':8, 'horror':9, 'biography':10, 'music':11, 'war':12, 'crime':13, 'western':14,
+ 'family':15, 'adventure':16, 'action':17, 'history':18 ,'mystery':19,  'sci_fi':20,
+ 'musical':21, 'thriller':22, 'film_noir':23, 'talk_show':24, 'game_show':25, 'reality_tv':26,
+ 'adult':27,'nan':28}
 
 def genres_to_list(x):
     if x != None :
@@ -169,6 +169,20 @@ def people():
             
             # print(query)     
             return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+        
+        elif genres!='NULL':
+            query = open('website/pysql/person-genre.txt', 'r').read()
+            formatted_query = query.format(
+                u_celeb=celeb_name,
+                u_genres=genres
+            )
+            #print(formatted_query)
+            cur.execute(formatted_query)
+            ret = cur.fetchall()
+            new_ret = [(x[0], x[1]) for x in ret]
+            
+            # print(query)     
+            return render_template("outputPeople.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
 
     return render_template("people.html",user=curr_user,name_of_user=session.get('username') )
 
