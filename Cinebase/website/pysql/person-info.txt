@@ -11,5 +11,5 @@ CASE
 titleid
 From persons natural join principals natural join title natural join ratings
 Where personid = {celebid} and (titleType = 'movie' or titleType = 'tvSeries')
-ORDER BY averageRating DESC, numVotes DESC
-LIMIT 10;
+ORDER BY averageRating*numVotes DESC
+LIMIT 21;
