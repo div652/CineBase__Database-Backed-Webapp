@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block title %}People Results{% endblock %} 
+
+{% block contentHeader %} Here are the people we found {% endblock %}
+
+{% block content
+    %}
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for (pid, name, category) in tuples %}
+            <tr>
+              <td><a href="/person_info?personid={{pid}}&name={{name}}">{{ name }}</a></td>
+              <td>{{ category }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endblock %}
+
+    
