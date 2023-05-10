@@ -7,4 +7,4 @@ category, runtime, startYear as Year, averageRating
 From ratings natural join title natural join principals natural join persons natural join popularity_by_personid
 Where titleid = {movie_tid}
 order by popularity DESC
-limit 10;
+limit 30;
