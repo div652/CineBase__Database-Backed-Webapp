@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, request, flash, jsonify, session
+from flask import Blueprint, render_template, request, flash, jsonify, session,redirect
 # from flask_login import login_required, current_user
 # from . import db
 import json
@@ -148,6 +148,7 @@ def quickLinks():
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
     titleid = request.args.get('titleid')
+    user_email = session.get('curr_user')
     moviename = request.args.get('moviename')
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
@@ -155,9 +156,41 @@ def movie_info():
     # if request.method == 'POST': 
         # person = request.form.get('p')#Gets the note from the HTML
     
+    if request.method=='POST':
+        conn = create_db_connection()
+        cur = conn.cursor()
+        print(request.form)
+        if request.form.get("update_submission"):
+            query = open('website/pysql/update_rating.txt','r').read()
+            formatted_query=query.format(
+                email_id = '\''+user_email+'\'', 
+                title_id = '\''+titleid+'\'',
+                rating_num = request.form.get("rating_update")
+                )
+            print("UPDATING A RATING")
+            cur.execute(formatted_query)
+            
+            flash('Rating Updated successfully!', category='success')
+            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+            
+            
+            
+        else:
+            query = open('website/pysql/insert_rating.txt','r').read()
+            
+            formatted_query=query.format(
+                email_id = '\''+user_email+'\'', 
+                title_id = '\''+titleid+'\'',
+                rating_num = request.form.get("rating_insert")
+                )
+            print("formatted query executed is ",formatted_query)
+            cur.execute(formatted_query)
+            flash('Rated movie successfully!', category='success')
+            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+
     conn = create_db_connection()
     cur = conn.cursor()
- 
+    
     query = "obama"  # the search query you want to make
     url = f"https://www.google.com/search?q={query}&amp;tbm=isch"  # the URL of the search result page
     
@@ -174,15 +207,35 @@ def movie_info():
     else:
         print("No image found on the page.")
 
-
+    user_has_rated=False
+    query = open('website/pysql/check-rated.txt','r').read()
+    print("USER EMAIL IS :",user_email)
+    formatted_query=query.format(
+        email_id = '\''+user_email+'\'', 
+        title_id = '\''+titleid+'\''
+        
+    )
+    cur.execute(formatted_query)
+    past_rating=0
+    ret=cur.fetchall()
+    print(type(ret))
+    print(len(ret))
+    if(not(len(ret)==0)):
+        user_has_rated=True
+        print("Bazinga")
+        past_rating=ret[0][2]
+    
+    
+    print("ret is ",ret, " and past_rating is ",past_rating)
     query = open('website/pysql/movie-info.txt', 'r').read()
     formatted_query = query.format(
         movie_tid='\''+titleid+'\'',
     )
+    
     cur.execute(formatted_query)
     # print(formatted_query)
     ret = cur.fetchall()
-    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename)
+    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
         
         
 

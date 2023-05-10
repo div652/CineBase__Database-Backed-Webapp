@@ -1,0 +1,2 @@
+insert into rated (emailid,titleid,rating)
+VALUES ({email_id},{title_id},{rating_num});

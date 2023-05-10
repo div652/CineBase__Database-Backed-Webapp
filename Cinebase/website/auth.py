@@ -58,6 +58,8 @@ def login():
                 session['logged_in'] = True
                 curr_user = email
                 session['username'] = ('Hi, '+ data[0][1])
+                session['curr_user']= email
+                print("EMAIL OF USER IS",email)
                 print("new name of use is now",data[0][1])
                 return redirect(url_for('views.home'))
             else:

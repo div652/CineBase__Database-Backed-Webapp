@@ -38,16 +38,34 @@
     <br>
     <br> 
 
+
+
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Rate this movie</h5>
-    <form method="POST">
+        {% if user_has_rated %}
+        <h5 class="card-title">Rate {{movie_name}} again</h5>
+        <p class="card-text">Your previous rating for this movie : {{past_rating}}</p> 
+    <form method="POST" >
       <div class="form-group">
-        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;">
+        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;"   name="rating_update">
         <output id="sliderValue">0</output>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary"  name="update_submission">Submit</button>
     </form>
+        {% else %}
+
+        <h5 class="card-title">Rate {{movie_name}} </h5>
+        
+    <form method="POST" >
+      <div class="form-group">
+        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;" name="rating_insert">
+        <output id="sliderValue">0</output>
+      </div>
+      <button type="submit" class="btn btn-primary"  name="new_submission">Submit</button>
+    </form>
+
+        {%endif%}
+        
   </div>
 </div>
     {% endblock %}

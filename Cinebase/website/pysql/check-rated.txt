@@ -1,0 +1,3 @@
+select emailid,titleid,rating
+from rated 
+where emailid={email_id} and titleid={title_id};
