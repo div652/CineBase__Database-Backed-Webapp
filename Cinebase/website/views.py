@@ -5,6 +5,8 @@ from flask import Blueprint, render_template, request, flash, jsonify, session
 import json
 import psycopg2
 from .auth import curr_user
+import requests
+from bs4 import BeautifulSoup
 
 def create_db_connection():
     conn = psycopg2.connect(
@@ -146,6 +148,7 @@ def quickLinks():
 @views.route('/movie_info', methods=['GET', 'POST'])
 def movie_info():
     titleid = request.args.get('titleid')
+    moviename = request.args.get('moviename')
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
@@ -154,7 +157,24 @@ def movie_info():
     
     conn = create_db_connection()
     cur = conn.cursor()
+ 
+    query = "obama"  # the search query you want to make
+    url = f"https://www.google.com/search?q={query}&amp;tbm=isch"  # the URL of the search result page
     
+    print("the url searched is ",url)
+    response = requests.get(url)  # make a GET request to the URL
+    soup = BeautifulSoup(response.text, "html.parser")  # parse the HTML content with BeautifulSoup
+    
+    # find the first image link by searching for the appropriate tag and attribute
+    img_tag = soup.find("img", {"class": "yWs4tf"})
+    
+    if img_tag is not None:
+        img_link = img_tag.get("src")
+        print(img_link)  # print the first image link
+    else:
+        print("No image found on the page.")
+
+
     query = open('website/pysql/movie-info.txt', 'r').read()
     formatted_query = query.format(
         movie_tid='\''+titleid+'\'',
@@ -162,15 +182,9 @@ def movie_info():
     cur.execute(formatted_query)
     # print(formatted_query)
     ret = cur.fetchall()
-    
-    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret)
-    
+    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename)
         
         
-         
-    
-    return render_template('quickLinks.html', link=titleid,user=curr_user,name_of_user=session.get('username') )
-
 
 # @views.route('/delete-note', methods=['POST'])
 # def delete_note():  

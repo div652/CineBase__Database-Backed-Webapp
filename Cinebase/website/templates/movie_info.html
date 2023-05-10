@@ -1,20 +1,56 @@
-{% extends "base.html" %} {% block title %}Movie Results{% endblock %} 
+{% extends "base.html" %} {% block title %}{{movie_name}}{% endblock %} 
 
-{% block contentHeader %} Here is the information about the movie  {% endblock %}
+{% block contentHeader %} Here is some information about the movie  {% endblock %}
 
 {% block content
     %}
-    {{ movie_data[0]}}
-<br>
-{{ movie_data[1]}}
-<br>
-{{ movie_data[2]}}
-<br>
-{{ movie_data[3]}}
-<br>
-{{ movie_data[4]}}
-<br>
 
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Movie Name : {{movie_name}}</li>
+        <li class="list-group-item">Runtime : {{movie_data[0][2]}} minutes </li>
+        <li class="list-group-item">Year of Release : {{movie_data[0][3]}} </li>
+        <li class="list-group-item">Movie Rating : {{movie_data[0][4]}} </li>
+
+      </ul>
+      <br>
+      <br>
+      <h2>People in the movie : </h2>
+      <br>
+      
+      <table class="table table-hover">
+        <thead>
+          <tr>
+              <th>Celebrity Name (Character Name)</th>
+              <th>Role of the celebrity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for (celebname, role,_,_,_) in movie_data %}
+            <tr>
+                <td>{{ celebname }}</td>
+                <td>{{role}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <br>
+    <br>
+    <br> 
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Rate this movie</h5>
+    <form method="POST">
+      <div class="form-group">
+        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;">
+        <output id="sliderValue">0</output>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
     {% endblock %}
-
+    
+    
     

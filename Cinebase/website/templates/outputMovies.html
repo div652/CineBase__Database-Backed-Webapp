@@ -14,7 +14,7 @@
         <tbody>
           {% for (id, name,year) in tuples %}
             <tr>
-              <td><a href="/movie_info?titleid={{id}}">{{ name }}</a></td>
+              <td><a href="/movie_info?titleid={{id}}&moviename={{name}}">{{ name }}</a></td>
               <td>{{year}}</td>
             </tr>
           {% endfor %}

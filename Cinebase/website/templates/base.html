@@ -148,6 +148,15 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Your JavaScript code here
+      const slider = document.getElementById("slider");
+      const sliderValue = document.getElementById("sliderValue");
+  
+      slider.addEventListener("input", function() {
+        sliderValue.textContent = slider.value;
+      });
+    </script>
     
 
 {% block javascript %}

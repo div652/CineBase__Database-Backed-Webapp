@@ -1,0 +1,9 @@
+select 
+    CASE 
+        WHEN category = 'actor' or category = 'actress' THEN primaryTitle::text || ' (' || characterName::text || ')'
+        ELSE primaryTitle::text
+    END AS title_info,
+category, title.*
+From persons natural join principals natural join title natural join ratings
+Where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))
+LIMIT 20;

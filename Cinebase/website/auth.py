@@ -31,6 +31,13 @@ def create_db_connection():
 auth = Blueprint('auth', __name__)
 
 
+
+
+def check_session():
+    if not session.get('loggedin'):
+        session['loggedin'] = False
+    session.permanent = True
+    
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     global curr_user,Name_of_user
@@ -50,7 +57,7 @@ def login():
                 flash('Logged in successfully!', category='success')
                 session['logged_in'] = True
                 curr_user = email
-                session['username'] =  data[0][1]
+                session['username'] = ('Hi, '+ data[0][1])
                 print("new name of use is now",data[0][1])
                 return redirect(url_for('views.home'))
             else:
