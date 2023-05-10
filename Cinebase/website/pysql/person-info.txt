@@ -12,4 +12,4 @@ titleid
 From persons natural join principals natural join title natural join ratings
 Where personid = {celebid} and (titleType = 'movie' or titleType = 'tvSeries')
 ORDER BY averageRating*numVotes DESC
-LIMIT 10;
+LIMIT 20;
