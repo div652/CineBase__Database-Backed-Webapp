@@ -160,8 +160,9 @@ def movie_info():
         conn = create_db_connection()
         cur = conn.cursor()
         print(request.form)
-        if request.form.get("update_submission"):
+        if 'update_submission' in request.form:
             query = open('website/pysql/update_rating.txt','r').read()
+            
             formatted_query=query.format(
                 email_id = '\''+user_email+'\'', 
                 title_id = '\''+titleid+'\'',
@@ -169,6 +170,7 @@ def movie_info():
                 )
             print("UPDATING A RATING")
             cur.execute(formatted_query)
+            conn.commit()
             
             flash('Rating Updated successfully!', category='success')
             return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
@@ -185,6 +187,7 @@ def movie_info():
                 )
             print("formatted query executed is ",formatted_query)
             cur.execute(formatted_query)
+            conn.commit()
             flash('Rated movie successfully!', category='success')
             return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
 
@@ -234,8 +237,16 @@ def movie_info():
     
     cur.execute(formatted_query)
     # print(formatted_query)
+    # if ret[0][2] is None:
+    #     ret[0][2] = "Not Released Yet"
+    print("When searching for movie info the query id was ",formatted_query)
+    
     ret = cur.fetchall()
-    return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
+    if(len(ret)==0):
+        flash('Movie has not released yet', category='error')
+        return redirect(request.referrer or '/')
+    else:    
+        return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
         
         
 

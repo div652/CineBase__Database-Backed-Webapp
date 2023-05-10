@@ -1,0 +1,3 @@
+update rated 
+set rating ={rating_num}
+where emailid={email_id} and titleid={title_id};
