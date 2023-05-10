@@ -3,7 +3,13 @@ select
         WHEN category = 'actor' or category = 'actress' THEN primaryTitle::text || ' (' || characterName::text || ')'
         ELSE primaryTitle::text
     END AS title_info,
-category, title.*
+category,
+CASE 
+        WHEN deathYear is null THEN (2022-birthYear)::text || '(' || birthYear::text || ' - ' ||  ')'
+        ELSE birthYear::text || ' - ' || deathYear::text
+    END AS age_info,
+title.*
 From persons natural join principals natural join title natural join ratings
-Where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))
-LIMIT 20;
+Where personid = {celebid}
+ORDER BY averageRating DESC, numVotes DESC
+LIMIT 10;
