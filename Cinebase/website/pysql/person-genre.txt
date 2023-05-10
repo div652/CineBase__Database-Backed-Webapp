@@ -1,0 +1,6 @@
+select personid, primaryName
+From persons natural join principals natural join title
+Where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))
+group by personid, primaryName
+order by celeb_popularity_given_genres(personid, {u_genres})
+limit 20;
