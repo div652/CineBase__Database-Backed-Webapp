@@ -1,11 +1,14 @@
 # <<<<<<< HEAD
 from flask import Blueprint, render_template, request, flash, redirect, url_for, g,session
+from datetime import date
+
 from werkzeug.security import generate_password_hash, check_password_hash
 # from flask_login import login_user, login_required, logout_user
 import psycopg2
 
 curr_user = "guest@nomail.com"
 Name_of_user = "Guest User"
+current_date = date.today()
 
 def get_db():
     if 'db' not in g:
@@ -59,6 +62,16 @@ def login():
                 curr_user = email
                 session['username'] = ('Hi, '+ data[0][1])
                 session['curr_user']= email
+                birthday=data[0][3]
+                age = current_date.year - birthday.year
+                
+                if current_date.month < birthday.month or (current_date.month == birthday.month and current_date.day < birthday.day):
+                    age -= 1
+                    
+                if(age<18):
+                    session['isAdult']='false'
+                else:
+                    session['isAdult']='true'
                 print("EMAIL OF USER IS",email)
                 print("new name of use is now",data[0][1])
                 return redirect(url_for('views.home'))
@@ -77,6 +90,7 @@ def logout():
     curr_user = "Guest"
     session['username'] ="Guest User"
     session['logged_in'] = False
+    
     flash('Logged out !', category='success')
     return redirect(url_for('auth.login'))
 

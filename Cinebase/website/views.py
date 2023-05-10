@@ -86,23 +86,30 @@ def movies_stuff():
         release_date_max = data['release_date-max']
         runtime_min = data['runtime-min']
         runtime_max = data['runtime-max']
-        moviemeter_min = data['moviemeter-min']
-        moviemeter_max = data['moviemeter-max']
         genres = genres_to_list(request.form.getlist('genres'))
-
+        cut_or_in = request.form[('flexRadioDefault1')]
+        print(cut_or_in)
         query = open('website/pysql/movie-master.txt', 'r').read()
+        isAdult='false'
+    
+        if(session.get('isAdult')):
+            print("this person is ",session['isAdult'])
+            if(session['isAdult'] =='true'):
+                isAdult='NULL'
+        print(isAdult)
         formatted_query = query.format(
             t_title=substring_tolookfor,
             t_type='\'movie\'',
             srt_yr=release_date_min,
             end_yr=release_date_max,
-            is_adlt='NULL',
-            rn_time=runtime_max,
+            is_adlt=isAdult,
+            rn_time_min=runtime_min,
+            rn_time_max=runtime_max,
             t_genre_list=genres,
-            cutOrIn='true'
+            cutOrIn=cut_or_in
         )
         cur.execute(formatted_query)
-        # print(formatted_query)
+        print(formatted_query)
         ret = cur.fetchall()
         new_ret = [(x[0], x[2],x[5]) for x in ret]
         
@@ -352,6 +359,10 @@ def person_info():
     # print(formatted_query)
     ret = cur.fetchall()
     return render_template("person_info.html",user=curr_user,name_of_user=session.get('username') , person_data=ret, person_name=name)
+
+# @views.route('/recommendations', methods=['GET', 'POST'])
+
+    
 
 
 # @views.route('/delete-note', methods=['POST'])

@@ -76,6 +76,23 @@
 
     </div>
   </div>
+
+<br>
+<br>
+<h5>Selection Choice</h5>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault2" checked style="display: inline-block;" value="true">
+  <label class="form-check-label" for="flexRadioDefault2" style="display: inline-block;" > 
+    I want any of these genres
+  </label>
+</div>
+  <div class="form-check">
+    <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault1" style="display: inline-block;" value="false">
+    <label class="form-check-label" for="flexRadioDefault1" style="display: inline-block;" >
+      I want all these genres
+    </label>
+  </div>
+  
    
   <br />
     <br />
@@ -135,27 +152,14 @@
         </h5>
       </div>
       <div class="inputs">
-        <input name="release_date-min" size="11" maxlength="11"> to <input name="release_date-max" size="11" maxlength="11">
+        <input name="release_date-min" size="11" maxlength="11" placeholder="start"> to <input name="release_date-max" size="11" maxlength="11" placeholder="end">
         <br><i>Format: YYYY</i>
       </div>
     </div>
     <br />
     <br />
 
-    <div class="clause">
-      <div class="label">
-
-        <h5>Popularity
-          
-        
-
-      </div>
-      <div class="inputs">
-
-        <input name="moviemeter-min" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this) class="form-control" "> to <input  class="form-control" name="moviemeter-max" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" style="width: 100px; display: inline-block;">
-
-      </div>
-    </div>
+    
     <br />
     
 

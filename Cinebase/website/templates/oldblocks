@@ -1,0 +1,14 @@
+<div class="clause">
+    <div class="label">
+
+      <h5>Popularity
+        
+      
+
+    </div>
+    <div class="inputs">
+
+      <input name="moviemeter-min" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" class="form-control" style="width: 100px; display: inline-block;"> to <input  class="form-control" name="moviemeter-max" size="10" onkeyup="forceNumeric(this)" onchange="forceNumeric(this)" style="width: 100px; display: inline-block; outline-color:black; outline-width: 10px;">
+
+    </div>
+  </div>

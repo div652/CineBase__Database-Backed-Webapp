@@ -5,6 +5,7 @@ Where ({t_title} is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || {t_tit
 	and ({srt_yr} is NULL or t.startyear >= {srt_yr})
 	and ({end_yr} is NULL or t.startyear <= {end_yr})
 	and ({is_adlt} is NULL or t.isadult = {is_adlt})
-	and ({rn_time} is NULL or t.runtime <= {rn_time})
+	and ({rn_time_max} is NULL or t.runtime <= {rn_time_max})
+	and ({rn_time_min} is NULL or t.runtime >= {rn_time_min})
 	and ({t_genre_list} = 0 or ({cutOrIn} = true and {t_genre_list} & t.genres > 0) or ({cutOrIn} = false and {t_genre_list} & t.genres = {t_genre_list}))
 Limit 100;
