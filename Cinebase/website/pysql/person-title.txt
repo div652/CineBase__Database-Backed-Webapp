@@ -1,0 +1,7 @@
+select personid, primaryName, titleid, primaryTitle
+From persons natural join principals natural join title
+Where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))
+and ({u_title} is NULL or lower(trim(primarytitle)) LIKE lower('%' || {u_title} || '%') or lower(trim(originaltitle)) LIKE lower('%' || {u_title} || '%'))
+and titleType = 'movie'
+group by personid, primaryName, titleid, primaryTitle
+limit 10;
