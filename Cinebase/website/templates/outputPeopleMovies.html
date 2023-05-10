@@ -8,14 +8,14 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Age</th>
+            <th>Title</th>
           </tr>
         </thead>
         <tbody>
           {% for (pid, name, tid, title) in tuples %}
             <tr>
-              <td><a href="/people_info?personid={{pid}}">{{ name }}</a></td>
-              <td><a href="/movie_info?titleid={{tid}}">{{ title }}</a></td>
+              <td><a href="/person_info?personid={{pid}}&name={{name}}">{{ name }}</a></td>
+              <td><a href="/movie_info?titleid={{tid}}&moviename={{title}}">{{ title }}</a></td>
             </tr>
           {% endfor %}
         </tbody>
