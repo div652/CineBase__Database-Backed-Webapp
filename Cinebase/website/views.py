@@ -200,7 +200,46 @@ def shows():
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
     if request.method == 'POST': 
-        person = request.form.get('p')#Gets the note from the HTML 
+        conn = create_db_connection()
+        cur = conn.cursor()
+        # cur.execute("SELECT * FROM users u where u.email = '{}'".format(email))
+        # data = cur.fetchall()
+
+        data = {}
+        for key, value in request.form.items():
+            if value == '':
+                data[key] = 'NULL'
+            elif not value.isdigit():
+                data[key] = '\'' + value + '\''
+            else:
+                data[key] = value
+
+        series_name = data['series_name_substr']
+        s_num_min = data['s_num_min']
+        s_num_max = data['s_num_max']
+        ep_num_min = data['ep_num_min']
+        ep_num_max = data['ep_num_max']
+        min_eps = data['min_eps']
+        max_eps = data['max_eps']
+
+        query = open('website/pysql/episode-master.txt', 'r').read()
+        formatted_query = query.format(
+            t_title=series_name,
+            s_num_max = s_num_max,
+            s_num_min = s_num_min,
+            ep_num_start = ep_num_max,
+            ep_num_min = ep_num_min,
+            min_eps = min_eps,
+            max_eps = max_eps
+        )
+        cur.execute(formatted_query)
+        # print(formatted_query)
+        ret = cur.fetchall()
+        new_ret = [(x[1], x[6], x[9]) for x in ret]
+        
+        # print(query)     
+        return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+    
     return render_template("shows.html",user=curr_user,name_of_user=session.get('username') )
 
 @views.route('/games', methods=['GET', 'POST'])
