@@ -9,7 +9,7 @@ CASE
         ELSE birthYear::text || ' - ' || deathYear::text
     END AS age_info,
 titleid
-From popularity_by_personid natural join persons natural join principals natural join title natural join ratings
+From persons natural join principals natural join title natural join ratings
 Where personid = {celebid} and (titleType = 'movie' or titleType = 'tvSeries')
-ORDER BY popularity DESC
+ORDER BY numVotes*averageRating DESC
 LIMIT 20;

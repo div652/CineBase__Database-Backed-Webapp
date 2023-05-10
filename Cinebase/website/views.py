@@ -177,7 +177,20 @@ def people():
             # print(query)     
             return render_template("outputPeopleMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
         
-        elif genres!='NULL':
+        elif genres==0:
+            query = open('website/pysql/person.txt', 'r').read()
+            formatted_query = query.format(
+                u_celeb=celeb_name
+            )
+            print(formatted_query)
+            cur.execute(formatted_query)
+            ret = cur.fetchall()
+            new_ret = [(x[0], x[1]) for x in ret]
+            
+            print(formatted_query)     
+            return render_template("outputPeople.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+        
+        else:
             query = open('website/pysql/person-genre.txt', 'r').read()
             formatted_query = query.format(
                 u_celeb=celeb_name,
@@ -240,7 +253,7 @@ def shows():
         new_ret = [(x[0], x[2], x[5]) for x in ret]
         
         # print(query)     
-        return render_template("outputMovies.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
+        return render_template("outputShows.html",user=curr_user,name_of_user=session.get('username') ,tuples=new_ret)
     
     return render_template("shows.html",user=curr_user,name_of_user=session.get('username') )
 
@@ -330,11 +343,11 @@ def quickLinks():
     #     ret = cur.fetchall()
     # Here you can use the value of `link` to determine what output to show
 
-@views.route('/movie_info', methods=['GET', 'POST'])
-def movie_info():
+@views.route('/show_info', methods=['GET', 'POST'])
+def show_info():
     titleid = request.args.get('titleid')
     user_email = session.get('curr_user')
-    moviename = request.args.get('moviename')
+    showname = request.args.get('moviename')
     if not session.get('logged_in'):
         flash('You must login to continue to this page', category='error')
         return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
@@ -358,7 +371,7 @@ def movie_info():
             conn.commit()
             
             flash('Rating Updated successfully!', category='success')
-            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+            return redirect(f"/show_info?titleid={titleid}&moviename={showname}")
             
             
             
@@ -373,28 +386,12 @@ def movie_info():
             print("formatted query executed is ",formatted_query)
             cur.execute(formatted_query)
             conn.commit()
-            flash('Rated movie successfully!', category='success')
-            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+            flash('Rated show successfully!', category='success')
+            return redirect(f"/show_info?titleid={titleid}&moviename={showname}")
 
     conn = create_db_connection()
     cur = conn.cursor()
     
-    query = "obama"  # the search query you want to make
-    url = f"https://www.google.com/search?q={query}&amp;tbm=isch"  # the URL of the search result page
-    
-    print("the url searched is ",url)
-    response = requests.get(url)  # make a GET request to the URL
-    soup = BeautifulSoup(response.text, "html.parser")  # parse the HTML content with BeautifulSoup
-    
-    # find the first image link by searching for the appropriate tag and attribute
-    img_tag = soup.find("img", {"class": "yWs4tf"})
-    
-    if img_tag is not None:
-        img_link = img_tag.get("src")
-        print(img_link)  # print the first image link
-    else:
-        print("No image found on the page.")
-
     user_has_rated=False
     query = open('website/pysql/check-rated.txt','r').read()
     print("USER EMAIL IS :",user_email)
@@ -424,14 +421,16 @@ def movie_info():
     # print(formatted_query)
     # if ret[0][2] is None:
     #     ret[0][2] = "Not Released Yet"
-    print("When searching for movie info the query id was ",formatted_query)
+    print("When searching for show info the query id was ",formatted_query)
     
     ret = cur.fetchall()
     if(len(ret)==0):
-        flash('Movie has not released yet', category='error')
+        flash('Show has not released yet', category='error')
         return redirect(request.referrer or '/')
     else:    
-        return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
+        return render_template("show_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=showname,user_has_rated=user_has_rated,past_rating=past_rating)
+        
+        
         
 @views.route('/person_info', methods=['GET', 'POST'])
 def person_info():

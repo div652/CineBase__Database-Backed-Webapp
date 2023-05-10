@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% block title %}{{movie_name}}{% endblock %} 
+
+{% block contentHeader %} Here is some information about the show  {% endblock %}
+
+{% block content
+    %}
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Show Name : {{movie_name}}</li>
+        <li class="list-group-item">Year of Release : {{movie_data[0][3]}} </li>
+        <li class="list-group-item">Show Rating : {{movie_data[0][4]}} </li>
+
+      </ul>
+      <br>
+      <br>
+      <h2>People in the show : </h2>
+      <br>
+      
+      <table class="table table-hover">
+        <thead>
+          <tr>
+              <th>Celebrity Name (Character Name)</th>
+              <th>Role of the celebrity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for (celebname, role,_,_,_) in movie_data %}
+            <tr>
+                <td>{{ celebname }}</td>
+                <td>{{role}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <br>
+    <br>
+    <br> 
+
+
+
+    <div class="card">
+      <div class="card-body">
+        {% if user_has_rated %}
+        <h5 class="card-title">Rate {{movie_name}} again</h5>
+        <p class="card-text">Your previous rating for this movie : {{past_rating}}</p> 
+    <form method="POST" >
+      <div class="form-group">
+        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;" name="rating_update">
+        <output id="sliderValue">0</output>
+      </div>
+      <button type="submit" class="btn btn-primary"  name="update_submission">Submit</button>
+    </form>
+        {% else %}
+
+        <h5 class="card-title">Rate {{movie_name}} </h5>
+        
+    <form method="POST" >
+      <div class="form-group">
+        <input type="range" class="form-control-range" id="slider" min="0" max="10" step="0.1" style="width:95%;" name="rating_insert">
+        <output id="sliderValue">0</output>
+      </div>
+      <button type="submit" class="btn btn-primary"  name="new_submission">Submit</button>
+    </form>
+
+        {%endif%}
+        
+  </div>
+</div>
+    {% endblock %}
+    
+    
+    

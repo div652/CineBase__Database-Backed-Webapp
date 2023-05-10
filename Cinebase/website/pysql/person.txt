@@ -1,0 +1,5 @@
+select personid, primaryName
+From persons natural join popularity_by_personid
+Where (lower(trim(primaryName)) LIKE lower('%' || {u_celeb} || '%'))
+order by popularity desc
+limit 50;
