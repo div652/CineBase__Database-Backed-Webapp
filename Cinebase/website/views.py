@@ -266,6 +266,97 @@ def games():
         person = request.form.get('p')#Gets the note from the HTML 
     return render_template("games.html",user=curr_user,name_of_user=session.get('username') )
 
+
+@views.route('/movie_info', methods=['GET', 'POST'])
+def movie_info():
+    titleid = request.args.get('titleid')
+    user_email = session.get('curr_user')
+    moviename = request.args.get('moviename')
+    if not session.get('logged_in'):
+        flash('You must login to continue to this page', category='error')
+        return render_template("home.html",user=curr_user,name_of_user=session.get('username') )
+    # if request.method == 'POST': 
+        # person = request.form.get('p')#Gets the note from the HTML
+    
+    if request.method=='POST':
+        conn = create_db_connection()
+        cur = conn.cursor()
+        print(request.form)
+        if 'update_submission' in request.form:
+            query = open('website/pysql/update_rating.txt','r').read()
+            
+            formatted_query=query.format(
+                email_id = '\''+user_email+'\'', 
+                title_id = '\''+titleid+'\'',
+                rating_num = request.form.get("rating_update")
+                )
+            print("UPDATING A RATING")
+            cur.execute(formatted_query)
+            conn.commit()
+            
+            flash('Rating Updated successfully!', category='success')
+            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+            
+            
+            
+        else:
+            query = open('website/pysql/insert_rating.txt','r').read()
+            
+            formatted_query=query.format(
+                email_id = '\''+user_email+'\'', 
+                title_id = '\''+titleid+'\'',
+                rating_num = request.form.get("rating_insert")
+                )
+            print("formatted query executed is ",formatted_query)
+            cur.execute(formatted_query)
+            conn.commit()
+            flash('Rated movie successfully!', category='success')
+            return redirect(f"/movie_info?titleid={titleid}&moviename={moviename}")
+
+    conn = create_db_connection()
+    cur = conn.cursor()
+    
+    
+
+    user_has_rated=False
+    query = open('website/pysql/check-rated.txt','r').read()
+    print("USER EMAIL IS :",user_email)
+    formatted_query=query.format(
+        email_id = '\''+user_email+'\'', 
+        title_id = '\''+titleid+'\''
+        
+    )
+    cur.execute(formatted_query)
+    past_rating=0
+    ret=cur.fetchall()
+    print(type(ret))
+    print(len(ret))
+    if(not(len(ret)==0)):
+        user_has_rated=True
+        print("Bazinga")
+        past_rating=ret[0][2]
+    
+    
+    print("ret is ",ret, " and past_rating is ",past_rating)
+    query = open('website/pysql/movie-info.txt', 'r').read()
+    formatted_query = query.format(
+        movie_tid='\''+titleid+'\'',
+    )
+    
+    cur.execute(formatted_query)
+    # print(formatted_query)
+    # if ret[0][2] is None:
+    #     ret[0][2] = "Not Released Yet"
+    print("When searching for movie info the query id was ",formatted_query)
+    
+    ret = cur.fetchall()
+    if(len(ret)==0):
+        flash('Movie has not released yet', category='error')
+        return redirect(request.referrer or '/')
+    else:    
+        return render_template("movie_info.html",user=curr_user,name_of_user=session.get('username') , movie_data=ret,movie_name=moviename,user_has_rated=user_has_rated,past_rating=past_rating)
+    
+    
 @views.route('/quickLinks', methods=['GET', 'POST'])
 def quickLinks():
     link = request.args.get('link')

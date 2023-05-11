@@ -1,5 +1,5 @@
 Select *
-From title t
+From title t left join ratings r on r.titleid=t.titleid
 Where ({t_title} is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || {t_title} || '%') or lower(trim(t.originaltitle)) LIKE lower('%' || {t_title} || '%'))
 	and ({t_type} is NULL or lower(t.titletype) = lower({t_type}))
 	and ({srt_yr} is NULL or t.startyear >= {srt_yr})
@@ -8,4 +8,5 @@ Where ({t_title} is NULL or lower(trim(t.primarytitle)) LIKE lower('%' || {t_tit
 	and ({rn_time_max} is NULL or t.runtime <= {rn_time_max})
 	and ({rn_time_min} is NULL or t.runtime >= {rn_time_min})
 	and ({t_genre_list} = 0 or ({cutOrIn} = true and {t_genre_list} & t.genres > 0) or ({cutOrIn} = false and {t_genre_list} & t.genres = {t_genre_list}))
+order by coalesce(averageRating,0)*coalesce(numVotes,0) DESC
 Limit 100;
