@@ -1,1 +1,1 @@
-select * from get_top_movies_by_character({emailid});
+select * from get_top_movies_by_celeb({emailid});
