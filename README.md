@@ -1,9 +1,10 @@
 # CineBase
-
-COL362 Course Project  by team **3 Amigos**
-- Anaad Kaur : 2020CS10320 
-- Divyanshu Agarwal : 2020CS10343 
-- Kartik Sharma : 2020CS10351
+Introduction to DBMS (COL362) Course Project by team **3 Amigos**
+- [Anaad Kaur](https://github.com/AnaadKaur) : 2020CS10320 
+- [Divyanshu Agarwal](https://github.com/div652): 2020CS10343 
+- [Kartik Sharma](https://github.com/kartkerb02) : 2020CS10351
+  
+Made during Spring '23 Semester at IIT Delhi (Junior Year for all 3 of us)
 
 ## PDF resources : 
 - **Introduction**: See [Intro.pdf](Intro.pdf) to get an overview of our website and overall design decisions
