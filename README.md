@@ -11,13 +11,17 @@ Make sure you have the latest version of Python installed.
 git clone <repo-url>
 ```
 
+Install all the required libraries 
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ## Running The App
 
+cd into the CineBase folder and run the ``main.py`` file
 ```bash
+cd Cinebase
 python main.py
 ```
 
