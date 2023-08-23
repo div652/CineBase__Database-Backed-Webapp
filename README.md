@@ -6,7 +6,7 @@ Introduction to DBMS (COL362) Course Project by team **3 Amigos**
   
 Made during Spring '23 Semester at IIT Delhi (Junior Year for all three of us)
 
-## PDF resources : 
+## PDF Resources : 
 - **Introduction**: See [Intro.pdf](Intro.pdf) to get an overview of our website and overall design decisions
 - **Data Cleaning**: See [DataCleaning.pdf](DataCleaning.pdf) to see how we cleaned the data, made indices, selected primary key constraints
 - **Functional Dependencies** : See [Functional_Dependecies.pdf](Functional_Dependencies.pdf) to see the dependencies in the raw data, and how we converted it to Boyce-Codd Normal Form (BCNF)
